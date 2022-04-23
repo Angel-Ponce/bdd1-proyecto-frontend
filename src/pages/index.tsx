@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useAppSelector } from "$hooks/useAppSelector";
-const { Title } = Typography;
+const { Title, Text } = Typography;
 interface Page {
   name: string;
   route: string;
@@ -58,22 +58,27 @@ const Home: NextPage = () => {
       </Head>
       <Header />
 
-      <div className="flex flex-col flex-1 justify-center items-center">
+      <div className="w-full flex flex-col items-center">
         {mounted && (
           <div className="container">
             {isLoggedIn ? (
               <>
-                <Breadcrumb>
-                  <Breadcrumb.Item>
-                    <Link href="/">
-                      <a>Inicio</a>
-                    </Link>
-                  </Breadcrumb.Item>
-                </Breadcrumb>
-                <Title level={2} className="!mb-10 sm:!mb-20 !text-blue-500">
+                <div className="h-16 flex items-center w-full">
+                  <Breadcrumb>
+                    <Breadcrumb.Item>
+                      <Link href="/">
+                        <a>Inicio</a>
+                      </Link>
+                    </Breadcrumb.Item>
+                  </Breadcrumb>
+                </div>
+                <Title level={2} className="!mt-5 ">
                   Hola, {user.name}.
                 </Title>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <Text>
+                  Bienvenido a tu portal administrativo. ¿Qué deseas hacer hoy?
+                </Text>
+                <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {pages.map((page, index) => (
                     <Link passHref href={page.route} key={index}>
                       <a>
@@ -93,7 +98,9 @@ const Home: NextPage = () => {
                 </div>
               </>
             ) : (
-              <AccessDenied />
+              <div className="flex justify-center items-center w-full min-h-[calc(100vh-4rem)]">
+                <AccessDenied />
+              </div>
             )}
           </div>
         )}
