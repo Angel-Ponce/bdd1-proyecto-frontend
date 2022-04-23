@@ -74,8 +74,6 @@ const Login: NextPage = () => {
 
       const { data } = res;
 
-      console.log(data);
-
       dispatch(
         login({
           id: data.id,

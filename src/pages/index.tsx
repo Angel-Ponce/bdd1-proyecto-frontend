@@ -4,9 +4,47 @@ import Header from "$templates/Header";
 import { pageTitle } from "$config/site";
 import AccessDenied from "$templates/AccessDenied";
 import { useLogin } from "$hooks/useLogin";
+import { Card, Typography } from "antd";
+import { ReactNode } from "react";
+import {
+  ShoppingCartOutlined,
+  UserOutlined,
+  PieChartOutlined,
+  TagOutlined,
+  SmileOutlined,
+  FunnelPlotOutlined,
+} from "@ant-design/icons";
+import Link from "next/link";
+const { Title } = Typography;
+interface Page {
+  name: string;
+  route: string;
+  icon: ReactNode;
+}
 
 const Home: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
+
+  const pages: Page[] = [
+    {
+      name: "Ventas",
+      route: "/sales",
+      icon: <ShoppingCartOutlined />,
+    },
+    {
+      name: "Usuarios",
+      route: "/users",
+      icon: <UserOutlined />,
+    },
+    {
+      name: "Reportes",
+      route: "/reports",
+      icon: <PieChartOutlined />,
+    },
+    { name: "Productos", route: "/products", icon: <TagOutlined /> },
+    { name: "Clientes", route: "/clients", icon: <SmileOutlined /> },
+    { name: "Proveedores", route: "/providers", icon: <FunnelPlotOutlined /> },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -21,8 +59,23 @@ const Home: NextPage = () => {
         {mounted && (
           <div className="container">
             {isLoggedIn ? (
-              <div>
-                <h1>You are logged in!</h1>
+              <div className="grid grid-cols-3 gap-4">
+                {pages.map((page, index) => (
+                  <Link passHref href={page.route} key={index}>
+                    <a>
+                      <Card hoverable>
+                        <div className="flex items-center gap-4">
+                          <div className="text-2xl flex justify-center items-center">
+                            {page.icon}
+                          </div>
+                          <Title level={4} className="!m-0">
+                            {page.name}
+                          </Title>
+                        </div>
+                      </Card>
+                    </a>
+                  </Link>
+                ))}
               </div>
             ) : (
               <AccessDenied />
