@@ -8,16 +8,14 @@ import { Typography } from "antd";
 import { useFormik } from "formik";
 import { useAppDispatch } from "$hooks/useAppDispatch";
 import { login } from "$store/slices/userSlice";
-import { useAppSelector } from "$hooks/useAppSelector";
 const { Title, Text } = Typography;
 import { useRouter } from "next/router";
 import { useLogin } from "$hooks/useLogin";
 import { useEffect } from "react";
+
 const Login: NextPage = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
-  const user = useAppSelector((state) => state.user);
 
   const [isLoggedIn, mounted] = useLogin();
 
@@ -80,7 +78,6 @@ const Login: NextPage = () => {
         {mounted && !isLoggedIn && (
           <div className="flex flex-col w-full sm:w-96 gap-3 container">
             <div className="flex flex-col w-full items-center mb-10">
-              {user.name}
               <Title level={3} className="!text-blue-500 text-center">
                 Iniciar sesión
               </Title>
