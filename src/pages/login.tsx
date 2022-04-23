@@ -5,9 +5,41 @@ import Header from "$templates/Header";
 import { Input, Button } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
+import { useFormik } from "formik";
 
 const { Title, Text } = Typography;
 const Login: NextPage = () => {
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate: (values) => {
+      const errors: any = {};
+
+      if (!values.email) {
+        errors.email = "El campo Correo Electrónico es obligatorio.";
+      }
+
+      if (!values.password) {
+        errors.password = "El campo Contraseña es obligatorio.";
+      }
+
+      if (
+        values.email &&
+        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+      ) {
+        errors.email = "Dirección de correo electrónico no válida";
+      }
+
+      return errors;
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+    validateOnChange: true,
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
@@ -18,31 +50,61 @@ const Login: NextPage = () => {
       </Head>
       <Header />
       <div className="flex flex-col flex-1 justify-center items-center">
-        <div className="flex flex-col w-full sm:w-96 gap-6 container">
-          <div className="flex flex-col w-full items-center mb-8">
+        <div className="flex flex-col w-full sm:w-96 gap-3 container">
+          <div className="flex flex-col w-full items-center mb-10">
             <Title level={3} className="!text-blue-500 text-center">
               Iniciar sesión
             </Title>
             <Text className="text-center">Inicia sesión para continuar</Text>
           </div>
 
-          <Input
-            type={"email"}
-            size="large"
-            placeholder="Ingresa tu correo electrónico"
-            prefix={<MailOutlined />}
-          />
-          <Input.Password
-            type={"password"}
-            size="large"
-            placeholder="Ingresa tu contraseña"
-            prefix={<LockOutlined />}
-          />
+          <div className="flex flex-col">
+            <Input
+              status={
+                formik.touched.email && formik.errors.email
+                  ? "error"
+                  : undefined
+              }
+              type={"email"}
+              name="email"
+              size="large"
+              placeholder="Ingresa tu correo electrónico"
+              prefix={<MailOutlined />}
+              onChange={formik.handleChange}
+              value={formik.values.email}
+            />
+            <Text className="!text-red-600 mt-1 h-[22px]">
+              {formik.touched.email && formik.errors.email
+                ? formik.errors.email
+                : undefined}
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Input.Password
+              status={
+                formik.touched.password && formik.errors.password
+                  ? "error"
+                  : undefined
+              }
+              type={"password"}
+              name="password"
+              size="large"
+              placeholder="Ingresa tu contraseña"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+              prefix={<LockOutlined />}
+            />
+            <Text className="!text-red-600 mt-1 h-[22px]">
+              {formik.touched.password && formik.errors.password
+                ? formik.errors.password
+                : undefined}
+            </Text>
+          </div>
           <Button
             size="large"
             type="primary"
             loading={false}
-            onClick={() => console.log("set loading true")}
+            onClick={() => formik.handleSubmit()}
           >
             Iniciar sesión
           </Button>
