@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import ls from "store2";
 
+type Role = "admin" | "cashier";
+
 interface User {
   id: string;
   name: string;
   email: string;
   token: string;
+  roles: Role[];
 }
 interface UserState extends User {
   loggedIn: boolean;
@@ -21,6 +24,7 @@ const initialState: UserState = {
   email: "john@doe.com",
   token: "e81bf2f3-f71b-4bea-8da7-e45afdd81e8f",
   loggedIn: false,
+  roles: ["admin"],
 };
 
 export const userSlice = createSlice({
@@ -38,6 +42,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { login } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 
 export default userSlice.reducer;

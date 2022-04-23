@@ -11,13 +11,15 @@ import { login } from "$store/slices/userSlice";
 const { Title, Text } = Typography;
 import { useRouter } from "next/router";
 import { useLogin } from "$hooks/useLogin";
-import { useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Login: NextPage = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   const [isLoggedIn, mounted] = useLogin();
+  const [logginIn, setLogginIn] = useState<boolean>(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -50,17 +52,29 @@ const Login: NextPage = () => {
 
       return errors;
     },
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      setLogginIn(true);
+
+      const { data } = await axios.post(
+        "https://bdd1-proyecto-backend.vercel.app/login",
+        {
+          email: values.email,
+          password: values.password,
+        }
+      );
 
       dispatch(
         login({
-          id: "123",
-          name: "test name",
-          email: values.email,
-          token: "12",
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          token: data.token,
+          roles: data.roles,
         })
       );
+
+      router.push("/");
+      setLogginIn(false);
     },
     validateOnChange: true,
   });
@@ -86,6 +100,7 @@ const Login: NextPage = () => {
 
             <div className="flex flex-col">
               <Input
+                disabled={logginIn}
                 status={
                   formik.touched.email && formik.errors.email
                     ? "error"
@@ -107,6 +122,7 @@ const Login: NextPage = () => {
             </div>
             <div className="flex flex-col">
               <Input.Password
+                disabled={logginIn}
                 status={
                   formik.touched.password && formik.errors.password
                     ? "error"
@@ -129,7 +145,7 @@ const Login: NextPage = () => {
             <Button
               size="large"
               type="primary"
-              loading={false}
+              loading={logginIn}
               onClick={() => formik.handleSubmit()}
             >
               Iniciar sesión

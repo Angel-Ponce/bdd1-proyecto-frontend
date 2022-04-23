@@ -3,20 +3,10 @@ import Head from "next/head";
 import Header from "$templates/Header";
 import { pageTitle } from "$config/site";
 import AccessDenied from "$templates/AccessDenied";
-import ls from "store2";
-import { login } from "$store/slices/userSlice";
-import { useAppDispatch } from "$hooks/useAppDispatch";
-import { useEffect } from "react";
+import { useLogin } from "$hooks/useLogin";
 
 const Home: NextPage = () => {
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    const user = ls.get("amabiscaUser");
-    if (user) {
-      dispatch(login(user));
-    }
-  }, [dispatch]);
+  const [isLoggedIn, mounted] = useLogin();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -28,9 +18,17 @@ const Home: NextPage = () => {
       <Header />
 
       <div className="flex flex-col flex-1 justify-center items-center">
-        <div className="container">
-          <AccessDenied />
-        </div>
+        {mounted && (
+          <div className="container">
+            {isLoggedIn ? (
+              <div>
+                <h1>You are logged in!</h1>
+              </div>
+            ) : (
+              <AccessDenied />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
