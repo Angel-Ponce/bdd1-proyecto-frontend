@@ -13,6 +13,8 @@ import { useRouter } from "next/router";
 import { useLogin } from "$hooks/useLogin";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import to from "await-to-ts";
+import toast from "react-hot-toast";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -55,13 +57,22 @@ const Login: NextPage = () => {
     onSubmit: async (values) => {
       setLogginIn(true);
 
-      const { data } = await axios.post(
-        "https://bdd1-proyecto-backend.vercel.app/login",
-        {
+      const [err, res] = await to(
+        axios.post("https://bdd1-proyecto-backend.vercel.app/login", {
           email: values.email,
           password: values.password,
-        }
+        })
       );
+
+      if (err) {
+        toast.error("Error al iniciar sesión", {
+          position: "bottom-right",
+        });
+        setLogginIn(false);
+        return;
+      }
+
+      const { data } = res;
 
       dispatch(
         login({
