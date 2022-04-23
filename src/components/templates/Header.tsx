@@ -13,7 +13,9 @@ const Header: FC = () => {
       <Title level={4} className="!m-0">
         {pageTitle}
       </Title>
-      <Text className="!text-gray-400 ml-4">Bienvenido a {pageTitle}</Text>
+      <Text className="!text-gray-400 ml-4 hidden sm:block">
+        Bienvenido a {pageTitle}
+      </Text>
     </div>
   );
 };

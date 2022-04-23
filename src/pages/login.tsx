@@ -18,7 +18,7 @@ const Login: NextPage = () => {
       </Head>
       <Header />
       <div className="flex flex-col flex-1 justify-center items-center">
-        <div className="flex flex-col w-96 gap-6">
+        <div className="flex flex-col w-full sm:w-96 gap-6 container">
           <div className="flex flex-col w-full items-center mb-8">
             <Title level={3} className="!text-blue-500 text-center">
               Iniciar sesión
