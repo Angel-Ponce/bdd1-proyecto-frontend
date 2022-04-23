@@ -1,9 +1,16 @@
 import "../styles/globals.scss";
-import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
+import { FC } from "react";
+type AppProps = { Component: FC; pageProps: any };
+import { Provider } from "react-redux";
+import { store } from "$store/store";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />;
+  return (
+    <Provider store={store}>
+      <Component {...pageProps} />
+    </Provider>
+  );
 };
 
 export default MyApp;
