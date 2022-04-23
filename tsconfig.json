@@ -21,7 +21,8 @@
       "$organisms/*": ["./src/components/organisms/*"],
       "$templates/*": ["./src/components/templates/*"],
       "$config/*": ["./src/config/*"],
-      "$store/*": ["./src/store/*"]
+      "$store/*": ["./src/store/*"],
+      "$hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

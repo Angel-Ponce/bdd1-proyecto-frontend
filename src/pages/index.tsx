@@ -3,8 +3,21 @@ import Head from "next/head";
 import Header from "$templates/Header";
 import { pageTitle } from "$config/site";
 import AccessDenied from "$templates/AccessDenied";
+import ls from "store2";
+import { login } from "$store/slices/userSlice";
+import { useAppDispatch } from "$hooks/useAppDispatch";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const user = ls.get("amabiscaUser");
+    if (user) {
+      dispatch(login(user));
+    }
+  }, [dispatch]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Head>

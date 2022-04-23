@@ -6,9 +6,27 @@ import { Input, Button } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
 import { useFormik } from "formik";
-
+import { useAppDispatch } from "$hooks/useAppDispatch";
+import { login } from "$store/slices/userSlice";
+import { useAppSelector } from "$hooks/useAppSelector";
 const { Title, Text } = Typography;
+import { useRouter } from "next/router";
+import { useLogin } from "$hooks/useLogin";
+import { useEffect } from "react";
 const Login: NextPage = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector((state) => state.user);
+
+  const [isLoggedIn, mounted] = useLogin();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -36,6 +54,15 @@ const Login: NextPage = () => {
     },
     onSubmit: (values) => {
       console.log(values);
+
+      dispatch(
+        login({
+          id: "123",
+          name: "test name",
+          email: values.email,
+          token: "12",
+        })
+      );
     },
     validateOnChange: true,
   });
@@ -50,65 +77,68 @@ const Login: NextPage = () => {
       </Head>
       <Header />
       <div className="flex flex-col flex-1 justify-center items-center">
-        <div className="flex flex-col w-full sm:w-96 gap-3 container">
-          <div className="flex flex-col w-full items-center mb-10">
-            <Title level={3} className="!text-blue-500 text-center">
-              Iniciar sesión
-            </Title>
-            <Text className="text-center">Inicia sesión para continuar</Text>
-          </div>
+        {mounted && !isLoggedIn && (
+          <div className="flex flex-col w-full sm:w-96 gap-3 container">
+            <div className="flex flex-col w-full items-center mb-10">
+              {user.name}
+              <Title level={3} className="!text-blue-500 text-center">
+                Iniciar sesión
+              </Title>
+              <Text className="text-center">Inicia sesión para continuar</Text>
+            </div>
 
-          <div className="flex flex-col">
-            <Input
-              status={
-                formik.touched.email && formik.errors.email
-                  ? "error"
-                  : undefined
-              }
-              type={"email"}
-              name="email"
+            <div className="flex flex-col">
+              <Input
+                status={
+                  formik.touched.email && formik.errors.email
+                    ? "error"
+                    : undefined
+                }
+                type={"email"}
+                name="email"
+                size="large"
+                placeholder="Ingresa tu correo electrónico"
+                prefix={<MailOutlined />}
+                onChange={formik.handleChange}
+                value={formik.values.email}
+              />
+              <Text className="!text-red-600 mt-1 h-[22px]">
+                {formik.touched.email && formik.errors.email
+                  ? formik.errors.email
+                  : undefined}
+              </Text>
+            </div>
+            <div className="flex flex-col">
+              <Input.Password
+                status={
+                  formik.touched.password && formik.errors.password
+                    ? "error"
+                    : undefined
+                }
+                type={"password"}
+                name="password"
+                size="large"
+                placeholder="Ingresa tu contraseña"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+                prefix={<LockOutlined />}
+              />
+              <Text className="!text-red-600 mt-1 h-[22px]">
+                {formik.touched.password && formik.errors.password
+                  ? formik.errors.password
+                  : undefined}
+              </Text>
+            </div>
+            <Button
               size="large"
-              placeholder="Ingresa tu correo electrónico"
-              prefix={<MailOutlined />}
-              onChange={formik.handleChange}
-              value={formik.values.email}
-            />
-            <Text className="!text-red-600 mt-1 h-[22px]">
-              {formik.touched.email && formik.errors.email
-                ? formik.errors.email
-                : undefined}
-            </Text>
+              type="primary"
+              loading={false}
+              onClick={() => formik.handleSubmit()}
+            >
+              Iniciar sesión
+            </Button>
           </div>
-          <div className="flex flex-col">
-            <Input.Password
-              status={
-                formik.touched.password && formik.errors.password
-                  ? "error"
-                  : undefined
-              }
-              type={"password"}
-              name="password"
-              size="large"
-              placeholder="Ingresa tu contraseña"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              prefix={<LockOutlined />}
-            />
-            <Text className="!text-red-600 mt-1 h-[22px]">
-              {formik.touched.password && formik.errors.password
-                ? formik.errors.password
-                : undefined}
-            </Text>
-          </div>
-          <Button
-            size="large"
-            type="primary"
-            loading={false}
-            onClick={() => formik.handleSubmit()}
-          >
-            Iniciar sesión
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );

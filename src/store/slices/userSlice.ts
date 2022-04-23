@@ -1,25 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
+import ls from "store2";
 
-interface UserState {
+interface User {
+  id: string;
   name: string;
+  email: string;
+  token: string;
+}
+interface UserState extends User {
+  loggedIn: boolean;
 }
 
-interface ChangeNameAction {
-  payload: string;
+interface LoginAction {
+  payload: User;
 }
 
-const initialState: UserState = { name: "John Doe" };
+const initialState: UserState = {
+  id: "77dd9fc8-8978-42d1-b743-6c1c103b1ac4",
+  name: "John Doe",
+  email: "john@doe.com",
+  token: "e81bf2f3-f71b-4bea-8da7-e45afdd81e8f",
+  loggedIn: false,
+};
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    changeName: (state: UserState, action: ChangeNameAction) => {
-      state.name = action.payload;
+    login: (state: UserState, action: LoginAction) => {
+      ls.set("amabiscaUser", action.payload);
+      return (state = { ...action.payload, loggedIn: true });
+    },
+    logout: (state: UserState) => {
+      return (state = { ...initialState });
     },
   },
 });
 
-export const { changeName } = userSlice.actions;
+export const { login } = userSlice.actions;
 
 export default userSlice.reducer;
