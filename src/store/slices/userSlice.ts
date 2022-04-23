@@ -32,6 +32,7 @@ export const userSlice = createSlice({
       return (state = { ...action.payload, loggedIn: true });
     },
     logout: (state: UserState) => {
+      ls.remove("amabiscaUser");
       return (state = { ...initialState });
     },
   },

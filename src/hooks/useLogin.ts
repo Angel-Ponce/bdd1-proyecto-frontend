@@ -13,7 +13,7 @@ const useLogin = () => {
   useEffect(() => {
     if (!user.loggedIn) {
       const user = ls.get("amabiscaUser");
-      dispatch(login(user));
+      user && dispatch(login(user));
     }
     setMounted(true);
   }, [user, dispatch]);
