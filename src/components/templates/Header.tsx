@@ -5,17 +5,14 @@ import Image from "next/image";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
 import { logout } from "$store/slices/userSlice";
-import { useRouter } from "next/router";
 const { Title, Text } = Typography;
 
 const Header: FC = () => {
-  const router = useRouter();
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/login");
   };
 
   return (
