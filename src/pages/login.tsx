@@ -74,6 +74,16 @@ const Login: NextPage = () => {
 
       const { data } = res;
 
+      if (data.error) {
+        if (data.description == "User credentials not valid") {
+          toast.error("Credenciales invalidas.", {
+            position: "bottom-right",
+          });
+          setLogginIn(false);
+          return;
+        }
+      }
+
       dispatch(
         login({
           id: data.id,
