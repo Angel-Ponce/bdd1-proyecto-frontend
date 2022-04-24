@@ -68,25 +68,27 @@ const UsersTable = () => {
       <div className="min-h-[400px] max-h-[700px] w-full overflow-auto px-4 py-2 border-gray-300 border-[1px]">
         <List
           loading={loading}
-          dataSource={users.users}
-          renderItem={(user) => (
-            <List.Item key={user.id}>
+          dataSource={users?.users || []}
+          renderItem={(item) => (
+            <List.Item key={item.id}>
               <List.Item.Meta
-                avatar={<Avatar src={user.image} />}
-                title={user.name}
+                avatar={<Avatar src={item.image} />}
+                title={item.name}
                 description={
                   <div>
-                    {user.email} -{" "}
-                    {user.roles.includes("admin") && "Administrador"}
-                    {user.roles.length > 1 && " / "}
-                    {user.roles.includes("cashier") && "Cajero"}
+                    {item.email} -{" "}
+                    {item.roles.includes("admin") && "Administrador"}
+                    {item.roles.length > 1 && " / "}
+                    {item.roles.includes("cashier") && "Cajero"}
                   </div>
                 }
               />
               <div>
-                <Button danger onClick={() => handleUserDelete(user.id)}>
-                  Borrar
-                </Button>
+                {user.email != item.email && (
+                  <Button danger onClick={() => handleUserDelete(item.id)}>
+                    Borrar
+                  </Button>
+                )}
               </div>
             </List.Item>
           )}
