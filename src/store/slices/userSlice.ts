@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import ls from "store2";
 
-type Role = "admin" | "cashier";
+export type Role = "admin" | "cashier";
 
 interface User {
   id: string;

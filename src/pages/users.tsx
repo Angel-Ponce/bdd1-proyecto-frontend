@@ -10,14 +10,15 @@ import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
 import { pageTitle } from "$config/site";
+import UsersTable from "$templates/UsersTable";
 
 const Users: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
   const [creatingUser, setCreatingUser] = useState<boolean>(false);
 
   const roles = [
-    <Select.Option key={"admin"}>Administrador</Select.Option>,
-    <Select.Option key={"cashier"}>Cajero</Select.Option>,
+    <Select.Option key={"1"}>Administrador</Select.Option>,
+    <Select.Option key={"2"}>Cajero</Select.Option>,
   ];
   const handleRoleChange = (value: string[]) => {
     addUserForm.setFieldTouched("roles", true);
@@ -99,8 +100,8 @@ const Users: NextPage = () => {
                     </Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
-                <div className="flex justify-between mt-5">
-                  <div>
+                <div className="flex justify-between mt-5 gap-20">
+                  <div className="w-96">
                     <Title level={2}>Agregar usuario</Title>
                     <Text>
                       Completa los campos necesarios para agregar un usuario.
@@ -232,7 +233,9 @@ const Users: NextPage = () => {
                       </Button>
                     </div>
                   </div>
-                  <div>Right</div>
+                  <div className="w-8/12">
+                    <UsersTable />
+                  </div>
                 </div>
               </>
             ) : (
