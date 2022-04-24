@@ -21,7 +21,8 @@ const ProvidersTable = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showEditProviderModal, setShowEditProviderModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const getProviders = async () => {
@@ -73,9 +74,9 @@ const ProvidersTable = () => {
 
   const [provider, setProvider] = useState<Provider | null>(null);
 
-  const openModal = (p: Provider) => {
+  const openEditProviderModal = (p: Provider) => {
     setProvider(p);
-    setShowModal(true);
+    setShowEditProviderModal(true);
   };
 
   return (
@@ -101,7 +102,9 @@ const ProvidersTable = () => {
               <div>
                 {user.email != item.email && (
                   <div className="flex gap-3">
-                    <Button onClick={() => openModal(item)}>Editar</Button>
+                    <Button onClick={() => openEditProviderModal(item)}>
+                      Editar
+                    </Button>
                     <Button
                       danger
                       onClick={() => handleProviderDelete(item.id)}
@@ -117,12 +120,15 @@ const ProvidersTable = () => {
       </div>
       <Modal
         title="Editar Proveedor"
-        visible={showModal}
+        visible={showEditProviderModal}
         footer={null}
         afterClose={() => setProvider(null)}
         closable={false}
       >
-        <EditProvider provider={provider} setShowModal={setShowModal} />
+        <EditProvider
+          provider={provider}
+          setShowModal={setShowEditProviderModal}
+        />
       </Modal>
     </div>
   );
