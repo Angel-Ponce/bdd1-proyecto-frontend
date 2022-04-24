@@ -22,7 +22,8 @@
       "$templates/*": ["./src/components/templates/*"],
       "$config/*": ["./src/config/*"],
       "$store/*": ["./src/store/*"],
-      "$hooks/*": ["./src/hooks/*"]
+      "$hooks/*": ["./src/hooks/*"],
+      "$helpers/*": ["./src/helpers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

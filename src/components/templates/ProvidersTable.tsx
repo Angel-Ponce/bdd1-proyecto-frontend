@@ -12,6 +12,7 @@ import {
   setProviders,
 } from "$store/slices/providersSlice";
 import EditProvider from "./EditProvider";
+import { separateNumberWithDashes } from "$helpers/separateNumberWithDashes";
 
 const ProvidersTable = () => {
   const user = useAppSelector((state) => state.user);
@@ -87,7 +88,15 @@ const ProvidersTable = () => {
             <List.Item key={item.id}>
               <List.Item.Meta
                 title={item.name}
-                description={<div>{item.email}</div>}
+                description={
+                  <div className="flex flex-col">
+                    <p className="!m-0">{item.email}</p>
+                    <p className="!m-0">{item.address}</p>
+                    <p className="!m-0">
+                      {separateNumberWithDashes(Number(item.phone))}
+                    </p>
+                  </div>
+                }
               />
               <div>
                 {user.email != item.email && (

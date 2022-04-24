@@ -50,6 +50,10 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
         errors.phone = "El campo Teléfono es obligatorio.";
       }
 
+      if (!values.phone.match(/^\d{8}$/)) {
+        errors.phone = "El campo Teléfono debe contener 8 dígitos.";
+      }
+
       if (!values.address) {
         errors.address = "El campo Dirección es obligatorio.";
       }

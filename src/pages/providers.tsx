@@ -57,6 +57,10 @@ const Providers: NextPage = () => {
         errors.address = "El campo Dirección es obligatorio.";
       }
 
+      if (!values.phone.match(/^\d{8}$/)) {
+        errors.phone = "El campo Teléfono debe contener 8 dígitos.";
+      }
+
       if (
         values.email &&
         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
