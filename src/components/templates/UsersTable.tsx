@@ -1,11 +1,10 @@
-import { List, Avatar, Button, Typography, Spin } from "antd";
+import { List, Avatar, Button } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import to from "await-to-ts";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { Role } from "$store/slices/userSlice";
 import toast from "react-hot-toast";
-const { Text } = Typography;
 
 interface User {
   id: string;
@@ -47,14 +46,9 @@ const UsersTable = () => {
 
   return (
     <div>
-      {loading && (
-        <div className="flex h-11 items-center gap-4">
-          <Text type="secondary">Cargando...</Text>
-          <Spin size="small" />
-        </div>
-      )}
       <div className="min-h-[400px] w-full overflow-auto px-4 py-2 border-gray-300 border-[1px]">
         <List
+          loading={loading}
           dataSource={users}
           renderItem={(user) => (
             <List.Item key={user.id}>
@@ -64,8 +58,8 @@ const UsersTable = () => {
                 description={
                   <div>
                     {user.email} -{" "}
-                    {user.roles.includes("admin") &&
-                      `Administrador ${user.roles.length > 1 ? "/" : ""}`}
+                    {user.roles.includes("admin") && "Administrador"}
+                    {user.roles.length > 1 && " / "}
                     {user.roles.includes("cashier") && "Cajero"}
                   </div>
                 }
