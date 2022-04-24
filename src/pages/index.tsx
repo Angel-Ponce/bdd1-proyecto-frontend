@@ -60,7 +60,7 @@ const Home: NextPage = () => {
 
       <div className="w-full flex flex-col items-center">
         {mounted && (
-          <div className="container">
+          <div className="container mb-8">
             {isLoggedIn ? (
               <>
                 <div className="h-16 flex items-center w-full">

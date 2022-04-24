@@ -16,7 +16,7 @@ const Header: FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-between border-[1px] border-gray-200 w-full h-16 px-10">
+    <div className="flex items-center justify-between border-[1px] border-gray-200 w-full h-16 px-7">
       <div className="flex items-center">
         <div className="mr-2 h-full grid place-items-center">
           <Image

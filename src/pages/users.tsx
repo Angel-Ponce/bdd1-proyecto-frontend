@@ -129,7 +129,7 @@ const Users: NextPage = () => {
       <Header />
       <div className="w-full flex flex-col items-center">
         {mounted && (
-          <div className="container">
+          <div className="container mb-8">
             {isLoggedIn ? (
               <>
                 <div className="h-16 flex items-center w-full">
@@ -146,8 +146,8 @@ const Users: NextPage = () => {
                     </Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
-                <div className="flex justify-between mt-5 gap-20">
-                  <div className="w-96">
+                <div className="flex justify-between mt-5 gap-20 flex-col lg:flex-row">
+                  <div className="w-full md:w-96">
                     <Title level={2}>Agregar usuario</Title>
                     <Text>
                       Completa los campos necesarios para agregar un usuario.
@@ -279,7 +279,7 @@ const Users: NextPage = () => {
                       </Button>
                     </div>
                   </div>
-                  <div className="w-8/12">
+                  <div className="w-full lg:w-8/12">
                     <UsersTable />
                   </div>
                 </div>
