@@ -9,7 +9,7 @@ interface User {
   roles: Role[];
 }
 
-interface UserState {
+interface UsersState {
   users: User[];
 }
 
@@ -21,13 +21,13 @@ interface AddAction {
   payload: User;
 }
 
-interface RemoveUser {
+interface RemoveAction {
   payload: {
     id: string;
   };
 }
 
-const initialState: UserState = {
+const initialState: UsersState = {
   users: [],
 };
 
@@ -35,13 +35,13 @@ export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    setUsers: (state: UserState, action: SetAction) => {
+    setUsers: (state: UsersState, action: SetAction) => {
       return (state = { users: action.payload });
     },
-    addUser: (state: UserState, action: AddAction) => {
+    addUser: (state: UsersState, action: AddAction) => {
       return (state = { users: [...state.users, action.payload] });
     },
-    removeUser: (state: UserState, action: RemoveUser) => {
+    removeUser: (state: UsersState, action: RemoveAction) => {
       return (state = {
         users: state.users.filter((user) => user.id != action.payload.id),
       });

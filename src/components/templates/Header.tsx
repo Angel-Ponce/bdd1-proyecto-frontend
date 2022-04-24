@@ -35,7 +35,7 @@ const Header: FC = () => {
         </Text>
       </div>
       {user.loggedIn && (
-        <Button danger size="large" type="primary" onClick={handleLogout}>
+        <Button danger size="large" onClick={handleLogout}>
           Cerrar sesión
         </Button>
       )}
