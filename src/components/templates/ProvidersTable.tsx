@@ -13,6 +13,7 @@ import {
 } from "$store/slices/providersSlice";
 import EditProvider from "./EditProvider";
 import { separateNumberWithDashes } from "$helpers/separateNumberWithDashes";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const ProvidersTable = () => {
   const user = useAppSelector((state) => state.user);
@@ -51,25 +52,36 @@ const ProvidersTable = () => {
   }, [user, dispatch, providers]);
 
   const handleProviderDelete = async (id: string) => {
-    setLoading(true);
+    Modal.confirm({
+      title: "¿Enserio deseas borrar este proveedor?",
+      icon: <ExclamationCircleOutlined />,
+      content:
+        "Recuerda que al borrarlo se eliminaran también todos sus productos asociados.",
+      async onOk() {
+        setLoading(true);
 
-    const [, res] = await to(
-      axios.delete(`${api}/providers/delete/${id}`, {
-        headers: {
-          "X-Token": user.token,
-        },
-      })
-    );
+        const [, res] = await to(
+          axios.delete(`${api}/providers/delete/${id}`, {
+            headers: {
+              "X-Token": user.token,
+            },
+          })
+        );
 
-    if (res) {
-      toast.success("Proveedor eliminado correctamente", {
-        position: "bottom-right",
-      });
+        if (res) {
+          toast.success("Proveedor eliminado correctamente", {
+            position: "bottom-right",
+          });
 
-      dispatch(removeProvider({ id: id }));
-    }
+          dispatch(removeProvider({ id: id }));
+        }
 
-    setLoading(false);
+        setLoading(false);
+
+        return res;
+      },
+      onCancel() {},
+    });
   };
 
   const [provider, setProvider] = useState<Provider | null>(null);
