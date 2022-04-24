@@ -47,10 +47,20 @@ export const providersSlice = createSlice({
         ),
       });
     },
+    updateProvider: (state: ProvidersState, action: AddAction) => {
+      return (state = {
+        providers: state.providers.map((provider) => {
+          if (provider.id == action.payload.id) {
+            return action.payload;
+          }
+          return provider;
+        }),
+      });
+    },
   },
 });
 
-export const { setProviders, addProvider, removeProvider } =
+export const { setProviders, addProvider, removeProvider, updateProvider } =
   providersSlice.actions;
 
 export default providersSlice.reducer;

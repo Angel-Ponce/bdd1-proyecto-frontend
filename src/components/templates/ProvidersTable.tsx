@@ -113,7 +113,7 @@ const ProvidersTable = () => {
         afterClose={() => setProvider(null)}
         closable={false}
       >
-        <EditProvider provider={provider!} setShowModal={setShowModal} />
+        <EditProvider provider={provider} setShowModal={setShowModal} />
       </Modal>
     </div>
   );
