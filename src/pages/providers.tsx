@@ -15,13 +15,13 @@ import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
 import { api, pageTitle } from "$config/site";
-
 import axios from "axios";
 import toast from "react-hot-toast";
 import to from "await-to-ts";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
 import { addProvider } from "$store/slices/providersSlice";
+import ProvidersTable from "$templates/ProvidersTable";
 
 const Providers: NextPage = () => {
   const dispatch = useAppDispatch();
@@ -246,7 +246,9 @@ const Providers: NextPage = () => {
                       </Button>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12">{/* <UsersTable /> */}</div>
+                  <div className="w-full lg:w-8/12">
+                    <ProvidersTable />
+                  </div>
                 </div>
               </>
             ) : (
