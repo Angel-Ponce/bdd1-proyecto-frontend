@@ -11,7 +11,6 @@ import {
   UserOutlined,
   PieChartOutlined,
   TagOutlined,
-  SmileOutlined,
   FunnelPlotOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
@@ -45,7 +44,6 @@ const Home: NextPage = () => {
       icon: <PieChartOutlined />,
     },
     { name: "Productos", route: "/products", icon: <TagOutlined /> },
-    { name: "Clientes", route: "/clients", icon: <SmileOutlined /> },
     { name: "Proveedores", route: "/providers", icon: <FunnelPlotOutlined /> },
   ];
 
