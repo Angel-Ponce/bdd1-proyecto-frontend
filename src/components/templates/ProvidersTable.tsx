@@ -1,4 +1,4 @@
-import { List, Button } from "antd";
+import { List, Button, Modal } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import to from "await-to-ts";
@@ -6,7 +6,12 @@ import { useAppSelector } from "$hooks/useAppSelector";
 import toast from "react-hot-toast";
 import { api } from "$config/site";
 import { useAppDispatch } from "$hooks/useAppDispatch";
-import { removeProvider, setProviders } from "$store/slices/providersSlice";
+import {
+  Provider,
+  removeProvider,
+  setProviders,
+} from "$store/slices/providersSlice";
+import EditProvider from "./EditProvider";
 
 const ProvidersTable = () => {
   const user = useAppSelector((state) => state.user);
@@ -14,6 +19,8 @@ const ProvidersTable = () => {
   const providers = useAppSelector((state) => state.providers);
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const getProviders = async () => {
@@ -63,6 +70,13 @@ const ProvidersTable = () => {
     setLoading(false);
   };
 
+  const [provider, setProvider] = useState<Provider | null>(null);
+
+  const openModal = (p: Provider) => {
+    setProvider(p);
+    setShowModal(true);
+  };
+
   return (
     <div>
       <div className="min-h-[400px] max-h-[700px] w-full overflow-auto px-4 py-2 border-gray-300 border-[1px]">
@@ -77,15 +91,30 @@ const ProvidersTable = () => {
               />
               <div>
                 {user.email != item.email && (
-                  <Button danger onClick={() => handleProviderDelete(item.id)}>
-                    Borrar
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button onClick={() => openModal(item)}>Editar</Button>
+                    <Button
+                      danger
+                      onClick={() => handleProviderDelete(item.id)}
+                    >
+                      Borrar
+                    </Button>
+                  </div>
                 )}
               </div>
             </List.Item>
           )}
         />
       </div>
+      <Modal
+        title="Editar Proveedor"
+        visible={showModal}
+        footer={null}
+        afterClose={() => setProvider(null)}
+        closable={false}
+      >
+        <EditProvider provider={provider!} setShowModal={setShowModal} />
+      </Modal>
     </div>
   );
 };

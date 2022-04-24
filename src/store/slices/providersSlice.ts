@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Provider {
+export interface Provider {
   id: string;
   name: string;
   email: string;
