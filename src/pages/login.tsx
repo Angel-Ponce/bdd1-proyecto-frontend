@@ -1,4 +1,4 @@
-import { pageTitle } from "$config/site";
+import { api, pageTitle } from "$config/site";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Header from "$templates/Header";
@@ -58,7 +58,7 @@ const Login: NextPage = () => {
       setLogginIn(true);
 
       const [err, res] = await to(
-        axios.post("https://bdd1-proyecto-backend.vercel.app/login", {
+        axios.post(`${api}/login`, {
           email: values.email,
           password: values.password,
         })

@@ -3,28 +3,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import to from "await-to-ts";
 import { useAppSelector } from "$hooks/useAppSelector";
-import { Role } from "$store/slices/userSlice";
 import toast from "react-hot-toast";
-
-interface User {
-  id: string;
-  name: string;
-  image: string;
-  email: string;
-  roles: Role[];
-}
+import { api } from "$config/site";
+import { removeUser, setUsers } from "$store/slices/usersSlice";
+import { useAppDispatch } from "$hooks/useAppDispatch";
 
 const UsersTable = () => {
   const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const users = useAppSelector((state) => state.users);
 
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getUsers = async () => {
       setLoading(true);
       const [err, res] = await to(
-        axios.get("https://bdd1-proyecto-backend.vercel.app/users", {
+        axios.get(`${api}/users`, {
           headers: {
             "X-Token": user.token,
           },
@@ -37,19 +32,43 @@ const UsersTable = () => {
         });
       }
 
-      setUsers(res.data.users);
+      dispatch(setUsers(res.data.users));
       setLoading(false);
     };
 
-    getUsers();
-  }, [user.token]);
+    if (users.users.length == 0) {
+      getUsers();
+    }
+  }, [user, dispatch, users]);
+
+  const handleUserDelete = async (id: string) => {
+    setLoading(true);
+
+    const [, res] = await to(
+      axios.delete(`${api}/users/delete/${id}`, {
+        headers: {
+          "X-Token": user.token,
+        },
+      })
+    );
+
+    if (res) {
+      toast.success("Usuario eliminado correctamente", {
+        position: "bottom-right",
+      });
+
+      dispatch(removeUser({ id: id }));
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div>
-      <div className="min-h-[400px] w-full overflow-auto px-4 py-2 border-gray-300 border-[1px]">
+      <div className="min-h-[400px] max-h-[700px] w-full overflow-auto px-4 py-2 border-gray-300 border-[1px]">
         <List
           loading={loading}
-          dataSource={users}
+          dataSource={users.users}
           renderItem={(user) => (
             <List.Item key={user.id}>
               <List.Item.Meta
@@ -65,7 +84,9 @@ const UsersTable = () => {
                 }
               />
               <div>
-                <Button danger>Borrar</Button>
+                <Button danger onClick={() => handleUserDelete(user.id)}>
+                  Borrar
+                </Button>
               </div>
             </List.Item>
           )}

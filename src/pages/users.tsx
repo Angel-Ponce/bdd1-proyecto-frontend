@@ -9,10 +9,21 @@ import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
-import { pageTitle } from "$config/site";
+import { api, pageTitle } from "$config/site";
 import UsersTable from "$templates/UsersTable";
 
+import axios from "axios";
+import toast from "react-hot-toast";
+import to from "await-to-ts";
+import { useAppSelector } from "$hooks/useAppSelector";
+import { useAppDispatch } from "$hooks/useAppDispatch";
+import { addUser } from "$store/slices/usersSlice";
+
 const Users: NextPage = () => {
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector((state) => state.user);
+
   const [isLoggedIn, mounted] = useLogin();
   const [creatingUser, setCreatingUser] = useState<boolean>(false);
 
@@ -66,8 +77,43 @@ const Users: NextPage = () => {
       return errors;
     },
     onSubmit: async (values) => {
-      console.log(values);
       setCreatingUser(true);
+
+      const [, res] = await to(
+        axios.post(
+          `${api}/users/create`,
+          {
+            email: values.email,
+            name: values.name,
+            password: values.password,
+            roles: values.roles,
+            // image: `https://avatars.dicebear.com/api/initials/${values.name}.svg`,
+          },
+          {
+            headers: {
+              "X-Token": user.token,
+            },
+          }
+        )
+      );
+
+      if (res) {
+        toast.success("Usuario creado correctamente", {
+          position: "bottom-right",
+        });
+        dispatch(
+          addUser({
+            name: values.name,
+            email: values.email,
+            roles: values.roles,
+            image: `https://avatars.dicebear.com/api/initials/${values.name}.svg`,
+            id: res.data.id,
+          })
+        );
+        addUserForm.resetForm();
+      }
+
+      setCreatingUser(false);
     },
     validateOnChange: true,
   });
