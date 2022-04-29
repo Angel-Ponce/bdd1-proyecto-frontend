@@ -16,8 +16,9 @@ import to from "await-to-ts";
 import axios from "axios";
 import { api } from "$config/site";
 import toast from "react-hot-toast";
-import CreateProduct from "./CreateProduct";
+import CreateProduct from "$organisms/CreateProduct";
 import Zoom from "react-medium-image-zoom";
+import CreatePresentation from "$organisms/CreatePresentation";
 
 const ProductsTable: FC = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +30,14 @@ const ProductsTable: FC = () => {
   const [showEditProductModal, setShowEditProductModal] =
     useState<boolean>(false);
 
+  const [showCreatePresentationModal, setShowPresentationModal] =
+    useState<boolean>(false);
+
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+
+  const [typeOfPresentationModal, setTypeOfPresentationModal] = useState<
+    "create" | "edit"
+  >("create");
 
   useEffect(() => {
     const getProducts = async () => {
@@ -83,11 +91,11 @@ const ProductsTable: FC = () => {
     {
       title: "Presentaciones",
       width: "200px",
-      dataIndex: "presentations",
-      render: (presentations) => (
+      dataIndex: "",
+      render: (value: Product) => (
         <>
           <div className="flex gap-2 flex-wrap">
-            {presentations.map((presentation: Presentation) => {
+            {value.presentations.map((presentation: Presentation) => {
               return (
                 <Tooltip
                   key={presentation.id}
@@ -97,7 +105,9 @@ const ProductsTable: FC = () => {
                   <Tag
                     color={presentation.color}
                     onClick={() => {
-                      console.log("asdda");
+                      setTypeOfPresentationModal("edit");
+                      setCurrentProduct(value);
+                      setShowPresentationModal(true);
                     }}
                     className="cursor-pointer select-none"
                   >
@@ -108,8 +118,16 @@ const ProductsTable: FC = () => {
               );
             })}
 
-            <Tooltip title="Agregar una nueva presentación" color={"blue"}>
-              <Button size="small" icon={<PlusOutlined />} />
+            <Tooltip title={"Agregar una nueva presentación"} color={"blue"}>
+              <Button
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setTypeOfPresentationModal("create");
+                  setCurrentProduct(value);
+                  setShowPresentationModal(true);
+                }}
+              />
             </Tooltip>
           </div>
         </>
@@ -202,6 +220,27 @@ const ProductsTable: FC = () => {
           modalType="edit"
           product={currentProduct}
           setShowModal={setShowEditProductModal}
+        />
+      </Modal>
+
+      <Modal
+        title={
+          typeOfPresentationModal == "create"
+            ? "Crear nueva presentación"
+            : "Editar presentación"
+        }
+        closable={false}
+        visible={showCreatePresentationModal}
+        footer={null}
+        destroyOnClose
+        afterClose={() => {
+          setCurrentProduct(null);
+        }}
+      >
+        <CreatePresentation
+          modalType={typeOfPresentationModal}
+          product={currentProduct}
+          setShowModal={setShowPresentationModal}
         />
       </Modal>
     </>

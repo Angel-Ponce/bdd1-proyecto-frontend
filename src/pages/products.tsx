@@ -8,7 +8,7 @@ import Head from "next/head";
 import { pageTitle } from "$config/site";
 import ProductsTable from "$templates/ProductsTable";
 import { useState } from "react";
-import CreateProduct from "$templates/CreateProduct";
+import CreateProduct from "$organisms/CreateProduct";
 
 const Products: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
