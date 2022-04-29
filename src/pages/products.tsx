@@ -71,6 +71,7 @@ const Products: NextPage = () => {
         >
           <CreateProduct
             product={null}
+            modalType="create"
             setShowModal={setShowCreateProductModal}
           />
         </Modal>

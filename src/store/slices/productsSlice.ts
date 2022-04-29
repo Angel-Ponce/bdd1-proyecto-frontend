@@ -17,6 +17,7 @@ export interface Product {
   image_link: string;
   purchase_price: number;
   provider: string;
+  provider_id: number;
   presentations: Presentation[];
 }
 interface ProductsState {

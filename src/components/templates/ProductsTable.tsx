@@ -27,6 +27,8 @@ const ProductsTable: FC = () => {
   const [showEditProductModal, setShowEditProductModal] =
     useState<boolean>(false);
 
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
@@ -114,7 +116,8 @@ const ProductsTable: FC = () => {
         <div className="flex gap-3">
           <Button
             onClick={() => {
-              console.log(value);
+              setCurrentProduct(value);
+              setShowEditProductModal(true);
             }}
           >
             Editar
@@ -141,8 +144,15 @@ const ProductsTable: FC = () => {
         visible={showEditProductModal}
         footer={null}
         destroyOnClose
+        afterClose={() => {
+          setCurrentProduct(null);
+        }}
       >
-        <CreateProduct product={null} setShowModal={setShowEditProductModal} />
+        <CreateProduct
+          modalType="edit"
+          product={currentProduct}
+          setShowModal={setShowEditProductModal}
+        />
       </Modal>
     </>
   );

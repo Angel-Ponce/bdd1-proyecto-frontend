@@ -4,7 +4,11 @@ import { useFormik } from "formik";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { Typography, Button, Input, Select } from "antd";
 import { TagOutlined, CameraOutlined } from "@ant-design/icons";
-import { addProduct, Product } from "$store/slices/productsSlice";
+import {
+  addProduct,
+  Product,
+  updateProduct,
+} from "$store/slices/productsSlice";
 import axios from "axios";
 import to from "await-to-ts";
 import { api } from "$config/site";
@@ -15,6 +19,7 @@ const { Text } = Typography;
 interface Props {
   product: Product | null;
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  modalType: "create" | "edit";
 }
 
 export interface ProductForm {
@@ -23,11 +28,11 @@ export interface ProductForm {
   price: number | undefined;
   image: string;
   provider: string;
-  salePrice: number | undefined;
-  initialStock: number | undefined;
+  salePrice?: number | undefined;
+  initialStock?: number | undefined;
 }
 
-const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
+const CreateProduct: FC<Props> = ({ product, setShowModal, modalType }) => {
   const providersState = useAppSelector((state) => state.providers.providers);
   const user = useAppSelector((state) => state.user);
 
@@ -36,18 +41,6 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
   const [providers, setProviders] = useState<JSX.Element[]>([]);
 
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (providersState.length != 0) {
-      setProviders(
-        providersState.map((provider: Provider) => {
-          return (
-            <Select.Option key={provider.id}>{provider.name}</Select.Option>
-          );
-        })
-      );
-    }
-  }, [providersState]);
 
   const handleProviderChange = (value: string) => {
     productForm.setFieldTouched("provider", true);
@@ -79,11 +72,11 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
         errors.price = "El campo Precio de compra a proveedor es obligatorio.";
       }
 
-      if (!values.salePrice) {
+      if (!values.salePrice && modalType == "create") {
         errors.salePrice = "El campo Precio de venta es obligatorio.";
       }
 
-      if (!values.initialStock) {
+      if (!values.initialStock && modalType == "create") {
         errors.initialStock = "El campo Stock inicial  es obligatorio.";
       }
 
@@ -103,42 +96,82 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
     },
     onSubmit: async (values) => {
       setSavingProduct(true);
-      const [, res] = await to(
-        axios.post(
-          `${api}/items/create`,
-          {
-            name: values.name,
-            description: values.description,
-            image: values.image,
-            price: values.price,
-            provider: values.provider,
-            stock: values.initialStock,
-            salePrice: values.salePrice,
-          },
-          {
-            headers: {
-              "X-Token": user.token,
+      if (modalType == "create") {
+        const [, res] = await to(
+          axios.post(
+            `${api}/items/create`,
+            {
+              name: values.name,
+              description: values.description,
+              image: values.image,
+              price: values.price,
+              provider: values.provider,
+              stock: values.initialStock,
+              salePrice: values.salePrice,
             },
-          }
-        )
-      );
-      if (res) {
-        toast.success("Producto guardado correctamente", {
-          position: "bottom-right",
-        });
-        dispatch(
-          addProduct({
-            id: res.data.id,
-            key: res.data.id,
-            description: values.description,
-            image_link: values.image,
-            name: values.name,
-            presentations: res.data.presentations || [],
-            provider: values.provider,
-            purchase_price: values.price || 0,
-          })
+            {
+              headers: {
+                "X-Token": user.token,
+              },
+            }
+          )
         );
-        productForm.resetForm();
+        if (res) {
+          toast.success("Producto guardado correctamente", {
+            position: "bottom-right",
+          });
+          dispatch(
+            addProduct({
+              id: res.data.id,
+              key: res.data.id,
+              description: values.description,
+              image_link: values.image,
+              name: values.name,
+              presentations: res.data.presentations || [],
+              provider: values.provider,
+              provider_id: res.data.provider_id,
+              purchase_price: values.price || 0,
+            })
+          );
+          productForm.resetForm();
+        }
+      } else {
+        const [, res] = await to(
+          axios.put(
+            `${api}/items/edit/${product?.id}`,
+            {
+              name: values.name,
+              description: values.description,
+              image: values.image,
+              price: values.price,
+              provider: values.provider,
+            },
+            {
+              headers: {
+                "X-Token": user.token,
+              },
+            }
+          )
+        );
+        if (res) {
+          toast.success("Producto guardado correctamente", {
+            position: "bottom-right",
+          });
+          dispatch(
+            updateProduct({
+              id: product?.id.toString() || "0",
+              key: product?.id.toString() || "0",
+              description: values.description,
+              image_link: values.image,
+              name: values.name,
+              presentations: product?.presentations || [],
+              provider: values.provider,
+              provider_id: product?.provider_id || 0,
+              purchase_price: values.price || 0,
+            })
+          );
+          productForm.resetForm();
+        }
       }
       setSavingProduct(false);
       setShowModal(false);
@@ -146,16 +179,31 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
     validateOnChange: true,
   });
 
-  // const { setValues } = productForm;
+  useEffect(() => {
+    if (providersState.length != 0) {
+      setProviders(
+        providersState.map((provider: Provider) => {
+          return (
+            <Select.Option key={provider.id}>{provider.name}</Select.Option>
+          );
+        })
+      );
+    }
+  }, [providersState]);
 
-  // useEffect(() => {
-  //   setValues({
-  //     name: provider?.name || "",
-  //     email: provider?.email || "",
-  //     phone: provider?.phone || "",
-  //     address: provider?.address || "",
-  //   });
-  // }, [setValues, provider]);
+  const { setValues } = productForm;
+
+  useEffect(() => {
+    if (modalType == "edit" && product) {
+      setValues({
+        name: product.name,
+        description: product.description,
+        price: product.purchase_price,
+        image: product.image_link,
+        provider: "2",
+      });
+    }
+  }, [modalType, product, setValues]);
 
   return (
     <div>
@@ -227,52 +275,57 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
         </Text>
       </div>
 
-      <div className="flex flex-col">
-        <Input
-          size="large"
-          disabled={savingProduct}
-          status={
-            productForm.touched.salePrice && productForm.errors.salePrice
-              ? "error"
-              : undefined
-          }
-          type={"number"}
-          name="salePrice"
-          placeholder="Precio de venta por unidad"
-          prefix={"Q"}
-          suffix={"GTQ"}
-          onChange={productForm.handleChange}
-          value={productForm.values.salePrice}
-        />
-        <Text className="!text-red-600 mt-1 h-[22px]">
-          {productForm.touched.salePrice && productForm.errors.salePrice
-            ? productForm.errors.salePrice
-            : undefined}
-        </Text>
-      </div>
+      {modalType == "create" && (
+        <>
+          <div className="flex flex-col">
+            <Input
+              size="large"
+              disabled={savingProduct}
+              status={
+                productForm.touched.salePrice && productForm.errors.salePrice
+                  ? "error"
+                  : undefined
+              }
+              type={"number"}
+              name="salePrice"
+              placeholder="Precio de venta por unidad"
+              prefix={"Q"}
+              suffix={"GTQ"}
+              onChange={productForm.handleChange}
+              value={productForm.values.salePrice}
+            />
+            <Text className="!text-red-600 mt-1 h-[22px]">
+              {productForm.touched.salePrice && productForm.errors.salePrice
+                ? productForm.errors.salePrice
+                : undefined}
+            </Text>
+          </div>
 
-      <div className="flex flex-col">
-        <Input
-          size="large"
-          disabled={savingProduct}
-          status={
-            productForm.touched.initialStock && productForm.errors.initialStock
-              ? "error"
-              : undefined
-          }
-          type={"number"}
-          name="initialStock"
-          placeholder="Stock inicial"
-          onChange={productForm.handleChange}
-          value={productForm.values.initialStock}
-        />
-        <Text className="!text-red-600 mt-1 h-[22px]">
-          {productForm.touched.initialStock && productForm.errors.initialStock
-            ? productForm.errors.initialStock
-            : undefined}
-        </Text>
-      </div>
-
+          <div className="flex flex-col">
+            <Input
+              size="large"
+              disabled={savingProduct}
+              status={
+                productForm.touched.initialStock &&
+                productForm.errors.initialStock
+                  ? "error"
+                  : undefined
+              }
+              type={"number"}
+              name="initialStock"
+              placeholder="Stock inicial"
+              onChange={productForm.handleChange}
+              value={productForm.values.initialStock}
+            />
+            <Text className="!text-red-600 mt-1 h-[22px]">
+              {productForm.touched.initialStock &&
+              productForm.errors.initialStock
+                ? productForm.errors.initialStock
+                : undefined}
+            </Text>
+          </div>
+        </>
+      )}
       <div className="flex flex-col">
         <Input
           size="large"
@@ -307,6 +360,9 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
           allowClear
           placeholder="Selecciona un proeveedor"
           onChange={handleProviderChange}
+          defaultValue={
+            modalType == "edit" ? product?.provider_id.toString() : undefined
+          }
         >
           {providers}
         </Select>
