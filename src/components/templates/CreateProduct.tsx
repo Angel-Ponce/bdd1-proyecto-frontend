@@ -4,7 +4,12 @@ import { useFormik } from "formik";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { Typography, Button, Input, Select } from "antd";
 import { TagOutlined, CameraOutlined } from "@ant-design/icons";
-import { Product } from "$store/slices/productsSlice";
+import { addProduct, Product } from "$store/slices/productsSlice";
+import axios from "axios";
+import to from "await-to-ts";
+import { api } from "$config/site";
+import toast from "react-hot-toast";
+import { useAppDispatch } from "$hooks/useAppDispatch";
 const { Text } = Typography;
 
 interface Props {
@@ -18,14 +23,19 @@ export interface ProductForm {
   price: number | undefined;
   image: string;
   provider: string;
+  salePrice: number | undefined;
+  initialStock: number | undefined;
 }
 
 const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
   const providersState = useAppSelector((state) => state.providers.providers);
+  const user = useAppSelector((state) => state.user);
 
-  const [savingProduct] = useState<boolean>(false);
+  const [savingProduct, setSavingProduct] = useState<boolean>(false);
 
   const [providers, setProviders] = useState<JSX.Element[]>([]);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (providersState.length != 0) {
@@ -49,6 +59,8 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
       name: "",
       description: "",
       price: undefined,
+      salePrice: undefined,
+      initialStock: undefined,
       image: "",
       provider: "",
     },
@@ -64,11 +76,23 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
       }
 
       if (!values.price) {
-        errors.price = "El campo Precio es obligatorio.";
+        errors.price = "El campo Precio de compra a proveedor es obligatorio.";
+      }
+
+      if (!values.salePrice) {
+        errors.salePrice = "El campo Precio de venta es obligatorio.";
+      }
+
+      if (!values.initialStock) {
+        errors.initialStock = "El campo Stock inicial  es obligatorio.";
       }
 
       if (!values.image) {
         errors.image = "El campo Imagen es obligatorio.";
+      }
+
+      if (!values.provider) {
+        errors.provider = "Debes seleccionar un proveedor. ";
       }
 
       if (!/^(ftp|http|https):\/\/[^ "]+$/.test(values.image)) {
@@ -78,40 +102,46 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
       return errors;
     },
     onSubmit: async (values) => {
-      // setSavingProduct(true);
-      // const [, res] = await to(
-      //   axios.put(
-      //     `${api}//edit/${provider?.id}`,
-      //     {
-      //       email: values.email,
-      //       name: values.name,
-      //       phone: values.phone,
-      //       address: values.address,
-      //     },
-      //     {
-      //       headers: {
-      //         "X-Token": user.token,
-      //       },
-      //     }
-      //   )
-      // );
-      // if (res) {
-      //   toast.success("Proveedor actualizado correctamente", {
-      //     position: "bottom-right",
-      //   });
-      //   dispatch(
-      //     updateProvider({
-      //       name: values.name,
-      //       email: values.email,
-      //       phone: values.phone,
-      //       address: values.address,
-      //       id: provider?.id || "",
-      //     })
-      //   );
-      //   productForm.resetForm();
-      // }
-      // setsavingProduct(false);
-      // setShowModal(false);
+      setSavingProduct(true);
+      const [, res] = await to(
+        axios.post(
+          `${api}/items/create`,
+          {
+            name: values.name,
+            description: values.description,
+            image: values.image,
+            price: values.price,
+            provider: values.provider,
+            stock: values.initialStock,
+            salePrice: values.salePrice,
+          },
+          {
+            headers: {
+              "X-Token": user.token,
+            },
+          }
+        )
+      );
+      if (res) {
+        toast.success("Producto guardado correctamente", {
+          position: "bottom-right",
+        });
+        dispatch(
+          addProduct({
+            id: res.data.id,
+            key: res.data.id,
+            description: values.description,
+            image_link: values.image,
+            name: values.name,
+            presentations: res.data.presentations || [],
+            provider: values.provider,
+            purchase_price: values.price || 0,
+          })
+        );
+        productForm.resetForm();
+      }
+      setSavingProduct(false);
+      setShowModal(false);
     },
     validateOnChange: true,
   });
@@ -184,7 +214,7 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
           }
           type={"number"}
           name="price"
-          placeholder="Precio"
+          placeholder="Precio de compra al proveedor"
           prefix={"Q"}
           suffix={"GTQ"}
           onChange={productForm.handleChange}
@@ -193,6 +223,52 @@ const CreateProduct: FC<Props> = ({ product, setShowModal }) => {
         <Text className="!text-red-600 mt-1 h-[22px]">
           {productForm.touched.price && productForm.errors.price
             ? productForm.errors.price
+            : undefined}
+        </Text>
+      </div>
+
+      <div className="flex flex-col">
+        <Input
+          size="large"
+          disabled={savingProduct}
+          status={
+            productForm.touched.salePrice && productForm.errors.salePrice
+              ? "error"
+              : undefined
+          }
+          type={"number"}
+          name="salePrice"
+          placeholder="Precio de venta por unidad"
+          prefix={"Q"}
+          suffix={"GTQ"}
+          onChange={productForm.handleChange}
+          value={productForm.values.salePrice}
+        />
+        <Text className="!text-red-600 mt-1 h-[22px]">
+          {productForm.touched.salePrice && productForm.errors.salePrice
+            ? productForm.errors.salePrice
+            : undefined}
+        </Text>
+      </div>
+
+      <div className="flex flex-col">
+        <Input
+          size="large"
+          disabled={savingProduct}
+          status={
+            productForm.touched.initialStock && productForm.errors.initialStock
+              ? "error"
+              : undefined
+          }
+          type={"number"}
+          name="initialStock"
+          placeholder="Stock inicial"
+          onChange={productForm.handleChange}
+          value={productForm.values.initialStock}
+        />
+        <Text className="!text-red-600 mt-1 h-[22px]">
+          {productForm.touched.initialStock && productForm.errors.initialStock
+            ? productForm.errors.initialStock
             : undefined}
         </Text>
       </div>

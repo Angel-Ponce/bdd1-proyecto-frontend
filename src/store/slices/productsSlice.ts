@@ -49,7 +49,7 @@ export const productsSlice = createSlice({
       return (state = { products: action.payload });
     },
     addProduct: (state: ProductsState, action: AddAction) => {
-      return (state = { products: [...state.products, action.payload] });
+      return (state = { products: [action.payload, ...state.products] });
     },
     removeProduct: (state: ProductsState, action: RemoveAction) => {
       return (state = {

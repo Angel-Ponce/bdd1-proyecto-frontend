@@ -59,7 +59,7 @@ const ProductsTable: FC = () => {
       width: "170px",
     },
     {
-      title: "Precio",
+      title: "Precio de compra al proveedor",
       width: "150px",
       dataIndex: "purchase_price",
       render: (value) => `${formatCurrency(value)}`,
@@ -119,7 +119,7 @@ const ProductsTable: FC = () => {
       columns={columns}
       dataSource={products.products}
       bordered
-      scroll={{ y: 600 }}
+      scroll={{ y: 560 }}
     />
   );
 };
