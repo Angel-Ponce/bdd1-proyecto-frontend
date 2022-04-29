@@ -89,21 +89,26 @@ const ProductsTable: FC = () => {
           <div className="flex gap-2 flex-wrap">
             {presentations.map((presentation: Presentation) => {
               return (
-                <Tag
+                <Tooltip
                   key={presentation.id}
-                  color={presentation.color}
-                  onClick={() => {
-                    console.log("asdda");
-                  }}
-                  className="cursor-pointer select-none"
+                  title="Haz clic para editar esta presentación"
+                  color={"cyan"}
                 >
-                  {presentation.name}: {presentation.quantity}{" "}
-                  {presentation.quantity > 1 ? "unidades" : "unidad"}
-                </Tag>
+                  <Tag
+                    color={presentation.color}
+                    onClick={() => {
+                      console.log("asdda");
+                    }}
+                    className="cursor-pointer select-none"
+                  >
+                    {presentation.name}: {presentation.quantity}{" "}
+                    {presentation.quantity > 1 ? "unidades" : "unidad"}
+                  </Tag>
+                </Tooltip>
               );
             })}
 
-            <Tooltip title="Agregar una nueva presentación">
+            <Tooltip title="Agregar una nueva presentación" color={"blue"}>
               <Button size="small" icon={<PlusOutlined />} />
             </Tooltip>
           </div>
