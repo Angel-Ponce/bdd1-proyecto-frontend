@@ -61,11 +61,6 @@ const ProductsTable: FC = () => {
       width: "150px",
     },
     {
-      title: "Descripción",
-      dataIndex: "description",
-      width: "170px",
-    },
-    {
       title: "Precio de compra al proveedor",
       width: "150px",
       dataIndex: "purchase_price",
@@ -137,6 +132,12 @@ const ProductsTable: FC = () => {
         dataSource={products.products}
         bordered
         scroll={{ y: 560 }}
+        expandable={{
+          expandedRowRender: (product) => (
+            <p style={{ margin: 0 }}>{product.description}</p>
+          ),
+          rowExpandable: (product) => product.description.length > 0,
+        }}
       />
       <Modal
         title="Editar producto"
