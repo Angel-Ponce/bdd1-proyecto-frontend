@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Table, Tag, Button, Modal } from "antd";
+import { Table, Tag, Button, Modal, Popconfirm } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   Presentation,
   Product,
+  removeProduct,
   setProducts,
 } from "$store/slices/productsSlice";
 import { formatCurrency } from "$helpers/formatCurrency";
@@ -117,11 +118,42 @@ const ProductsTable: FC = () => {
           >
             Editar
           </Button>
-          <Button danger>Eliminar</Button>
+
+          <Popconfirm
+            title="Estas seguro de eliminar este producto?"
+            onConfirm={() => {
+              deleteProduct(value.id);
+            }}
+            onCancel={() => {}}
+            okText="Si"
+            cancelText="No"
+          >
+            <Button danger>Eliminar</Button>
+          </Popconfirm>
         </div>
       ),
     },
   ];
+
+  const deleteProduct = async (id: string) => {
+    setLoading(true);
+
+    const [, res] = await to(
+      axios.delete(`${api}/items/delete/${id}`, {
+        headers: {
+          "X-Token": user.token,
+        },
+      })
+    );
+    if (res) {
+      toast.success("Producto eliminado correctamente", {
+        position: "bottom-right",
+      });
+      dispatch(removeProduct({ id: id }));
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
