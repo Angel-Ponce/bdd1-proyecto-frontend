@@ -105,11 +105,12 @@ const ProductsTable: FC = () => {
 
   return (
     <Table
-      pagination={{ pageSize: 2 }}
+      pagination={{ pageSize: 10 }}
       loading={loading}
       columns={columns}
       dataSource={products.products}
       bordered
+      scroll={{ y: 600 }}
     />
   );
 };

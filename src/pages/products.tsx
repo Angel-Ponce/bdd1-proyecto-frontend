@@ -51,7 +51,7 @@ const Products: NextPage = () => {
                     Crear producto
                   </Button>
                 </div>
-                <div className="mt-5">
+                <div className="mt-5 overflow-x-auto">
                   <ProductsTable />
                 </div>
               </>
