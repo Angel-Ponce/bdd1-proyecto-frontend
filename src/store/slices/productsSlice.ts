@@ -7,6 +7,7 @@ export interface Presentation {
   quantity: number;
   sale_price: number;
   color: string;
+  is_unit: boolean;
 }
 
 export interface Product {
