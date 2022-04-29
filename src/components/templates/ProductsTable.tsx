@@ -51,18 +51,22 @@ const ProductsTable: FC = () => {
     {
       title: "Nombre",
       dataIndex: "name",
+      width: "150px",
     },
     {
       title: "Descripción",
       dataIndex: "description",
+      width: "170px",
     },
     {
       title: "Precio",
+      width: "150px",
       dataIndex: "purchase_price",
       render: (value) => `${formatCurrency(value)}`,
     },
     {
       title: "Imagen",
+      width: "150px",
       dataIndex: "image_link",
       render: (value) => (
         <>
@@ -72,26 +76,31 @@ const ProductsTable: FC = () => {
     },
     {
       title: "Presentaciones",
+      width: "200px",
       dataIndex: "presentations",
       render: (presentations) => (
         <>
-          {presentations.map((presentation: Presentation) => {
-            return (
-              <Tag color={presentation.color} key={presentation.id}>
-                {presentation.name}: {presentation.quantity}{" "}
-                {presentation.quantity > 1 ? "unidades" : "unidad"}
-              </Tag>
-            );
-          })}
+          <div className="flex gap-2 flex-wrap">
+            {presentations.map((presentation: Presentation) => {
+              return (
+                <Tag color={presentation.color} key={presentation.id}>
+                  {presentation.name}: {presentation.quantity}{" "}
+                  {presentation.quantity > 1 ? "unidades" : "unidad"}
+                </Tag>
+              );
+            })}
+          </div>
         </>
       ),
     },
     {
       title: "Proveedor",
+      width: "150px",
       dataIndex: "provider",
     },
     {
       title: "Acción",
+      width: "200px",
       dataIndex: "",
       key: "actions",
       render: (value) => (
