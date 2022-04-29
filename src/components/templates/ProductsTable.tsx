@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Table, Tag, Button, Modal, Popconfirm } from "antd";
+import { Table, Tag, Button, Modal, Popconfirm, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   Presentation,
@@ -8,6 +8,7 @@ import {
   removeProduct,
   setProducts,
 } from "$store/slices/productsSlice";
+import { PlusOutlined } from "@ant-design/icons";
 import { formatCurrency } from "$helpers/formatCurrency";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
@@ -88,12 +89,23 @@ const ProductsTable: FC = () => {
           <div className="flex gap-2 flex-wrap">
             {presentations.map((presentation: Presentation) => {
               return (
-                <Tag color={presentation.color} key={presentation.id}>
+                <Tag
+                  key={presentation.id}
+                  color={presentation.color}
+                  onClick={() => {
+                    console.log("asdda");
+                  }}
+                  className="cursor-pointer select-none"
+                >
                   {presentation.name}: {presentation.quantity}{" "}
                   {presentation.quantity > 1 ? "unidades" : "unidad"}
                 </Tag>
               );
             })}
+
+            <Tooltip title="Agregar una nueva presentación">
+              <Button size="small" icon={<PlusOutlined />} />
+            </Tooltip>
           </div>
         </>
       ),
@@ -120,7 +132,7 @@ const ProductsTable: FC = () => {
           </Button>
 
           <Popconfirm
-            title="Estas seguro de eliminar este producto?"
+            title="¿Estás seguro de eliminar este producto?"
             onConfirm={() => {
               deleteProduct(value.id);
             }}
