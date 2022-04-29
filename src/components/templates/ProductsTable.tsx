@@ -58,17 +58,6 @@ const ProductsTable: FC = () => {
 
   const columns: ColumnsType<Product> = [
     {
-      title: "Nombre",
-      dataIndex: "name",
-      width: "150px",
-    },
-    {
-      title: "Precio de compra al proveedor",
-      width: "150px",
-      dataIndex: "purchase_price",
-      render: (value) => `${formatCurrency(value)}`,
-    },
-    {
       title: "Imagen",
       width: "150px",
       dataIndex: "image_link",
@@ -79,6 +68,17 @@ const ProductsTable: FC = () => {
           </Zoom>
         </>
       ),
+    },
+    {
+      title: "Nombre",
+      dataIndex: "name",
+      width: "150px",
+    },
+    {
+      title: "Precio de compra al proveedor",
+      width: "150px",
+      dataIndex: "purchase_price",
+      render: (value) => `${formatCurrency(value)}`,
     },
     {
       title: "Presentaciones",
