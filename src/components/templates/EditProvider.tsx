@@ -14,6 +14,7 @@ import {
   PhoneOutlined,
   EnvironmentOutlined,
 } from "@ant-design/icons";
+import { ProviderForm } from "src/pages/providers";
 const { Text } = Typography;
 
 interface Props {
@@ -28,11 +29,11 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
 
   const [updatingProvider, setUpdatingProvider] = useState<boolean>(false);
 
-  const editProviderForm = useFormik({
+  const editProviderForm = useFormik<ProviderForm>({
     initialValues: {
       name: "",
       email: "",
-      phone: "",
+      phone: undefined,
       address: "",
     },
     validate: (values) => {
@@ -50,12 +51,16 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
         errors.phone = "El campo Teléfono es obligatorio.";
       }
 
-      if (!values.phone.match(/^\d{8}$/)) {
-        errors.phone = "El campo Teléfono debe contener 8 dígitos.";
+      if (!values.phone) {
+        errors.phone = "El campo Teléfono es obligatorio.";
       }
 
       if (!values.address) {
         errors.address = "El campo Dirección es obligatorio.";
+      }
+
+      if (values.phone && !values.phone.toString().match(/^\d{8}$/)) {
+        errors.phone = "El campo Teléfono debe contener 8 dígitos.";
       }
 
       if (
@@ -93,7 +98,7 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
           updateProvider({
             name: values.name,
             email: values.email,
-            phone: values.phone,
+            phone: values.phone?.toString() || "",
             address: values.address,
             id: provider?.id || "",
           })
@@ -112,7 +117,7 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
     setValues({
       name: provider?.name || "",
       email: provider?.email || "",
-      phone: provider?.phone || "",
+      phone: Number(provider?.phone) || undefined,
       address: provider?.address || "",
     });
   }, [setValues, provider]);
@@ -171,6 +176,8 @@ const EditProvider: FC<Props> = ({ provider, setShowModal }) => {
           }
           type={"tel"}
           name="phone"
+          showCount
+          maxLength={8}
           placeholder="Número telefónico "
           prefix={<PhoneOutlined />}
           onChange={editProviderForm.handleChange}

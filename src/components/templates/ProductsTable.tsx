@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Table, Tag } from "antd";
+import { Table, Tag, Button } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   Presentation,
@@ -89,6 +89,17 @@ const ProductsTable: FC = () => {
     {
       title: "Proveedor",
       dataIndex: "provider",
+    },
+    {
+      title: "Acción",
+      dataIndex: "",
+      key: "actions",
+      render: (value) => (
+        <div className="flex gap-3">
+          <Button>Editar</Button>
+          <Button danger>Eliminar</Button>
+        </div>
+      ),
     },
   ];
 

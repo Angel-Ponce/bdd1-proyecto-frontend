@@ -1,15 +1,20 @@
 import { NextPage } from "next";
 import Header from "$templates/Header";
-import { Breadcrumb, Button } from "antd";
+import { Breadcrumb, Button, Modal } from "antd";
 import Link from "next/link";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
 import { pageTitle } from "$config/site";
 import ProductsTable from "$templates/ProductsTable";
+import { useState } from "react";
+import CreateProduct from "$templates/CreateProduct";
 
 const Products: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
+  const [showCreateProductModal, setShowCreateProductModal] =
+    useState<boolean>(false);
+
   return (
     <>
       <Head>
@@ -39,9 +44,14 @@ const Products: NextPage = () => {
                   </Breadcrumb>
                 </div>
                 <div className="flex mt-5 justify-end">
-                  <Button type="primary">Crear producto</Button>
+                  <Button
+                    type="primary"
+                    onClick={() => setShowCreateProductModal(true)}
+                  >
+                    Crear producto
+                  </Button>
                 </div>
-                <div>
+                <div className="mt-5">
                   <ProductsTable />
                 </div>
               </>
@@ -52,6 +62,18 @@ const Products: NextPage = () => {
             )}
           </div>
         )}
+        <Modal
+          title="Crear producto"
+          closable={false}
+          visible={showCreateProductModal}
+          footer={null}
+          destroyOnClose
+        >
+          <CreateProduct
+            product={null}
+            setShowModal={setShowCreateProductModal}
+          />
+        </Modal>
       </div>
     </>
   );

@@ -23,6 +23,13 @@ import { useAppDispatch } from "$hooks/useAppDispatch";
 import { addProvider } from "$store/slices/providersSlice";
 import ProvidersTable from "$templates/ProvidersTable";
 
+export interface ProviderForm {
+  name: string;
+  email: string;
+  phone: number | undefined;
+  address: string;
+}
+
 const Providers: NextPage = () => {
   const dispatch = useAppDispatch();
 
@@ -31,11 +38,11 @@ const Providers: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
   const [creatingProvider, setCreatingProvider] = useState<boolean>(false);
 
-  const addProviderForm = useFormik({
+  const addProviderForm = useFormik<ProviderForm>({
     initialValues: {
       name: "",
       email: "",
-      phone: "",
+      phone: undefined,
       address: "",
     },
     validate: (values) => {
@@ -57,7 +64,7 @@ const Providers: NextPage = () => {
         errors.address = "El campo Dirección es obligatorio.";
       }
 
-      if (!values.phone.match(/^\d{8}$/)) {
+      if (values.phone && !values.phone.toString().match(/^\d{8}$/)) {
         errors.phone = "El campo Teléfono debe contener 8 dígitos.";
       }
 
@@ -96,7 +103,7 @@ const Providers: NextPage = () => {
           addProvider({
             name: values.name,
             email: values.email,
-            phone: values.phone,
+            phone: values.phone?.toString() || "",
             address: values.address,
             id: res.data.id,
           })
@@ -201,7 +208,9 @@ const Providers: NextPage = () => {
                               ? "error"
                               : undefined
                           }
-                          type={"tel"}
+                          showCount
+                          maxLength={8}
+                          type={"number"}
                           name="phone"
                           size="large"
                           placeholder="Número telefónico "
