@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Table, Tag, Button } from "antd";
+import { Table, Tag, Button, Modal } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   Presentation,
@@ -14,6 +14,8 @@ import to from "await-to-ts";
 import axios from "axios";
 import { api } from "$config/site";
 import toast from "react-hot-toast";
+import CreateProduct from "./CreateProduct";
+import Zoom from "react-medium-image-zoom";
 
 const ProductsTable: FC = () => {
   const dispatch = useAppDispatch();
@@ -21,6 +23,9 @@ const ProductsTable: FC = () => {
   const user = useAppSelector((state) => state.user);
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [showEditProductModal, setShowEditProductModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -70,7 +75,9 @@ const ProductsTable: FC = () => {
       dataIndex: "image_link",
       render: (value) => (
         <>
-          <img src={value} alt={value} width={100} height={100} />
+          <Zoom zoomMargin={20}>
+            <img src={value} alt={value} width={60} height={60} />
+          </Zoom>
         </>
       ),
     },
@@ -103,9 +110,15 @@ const ProductsTable: FC = () => {
       width: "200px",
       dataIndex: "",
       key: "actions",
-      render: (value) => (
+      render: (value: Product) => (
         <div className="flex gap-3">
-          <Button>Editar</Button>
+          <Button
+            onClick={() => {
+              console.log(value);
+            }}
+          >
+            Editar
+          </Button>
           <Button danger>Eliminar</Button>
         </div>
       ),
@@ -113,14 +126,25 @@ const ProductsTable: FC = () => {
   ];
 
   return (
-    <Table
-      pagination={{ pageSize: 10 }}
-      loading={loading}
-      columns={columns}
-      dataSource={products.products}
-      bordered
-      scroll={{ y: 560 }}
-    />
+    <>
+      <Table
+        pagination={{ pageSize: 10 }}
+        loading={loading}
+        columns={columns}
+        dataSource={products.products}
+        bordered
+        scroll={{ y: 560 }}
+      />
+      <Modal
+        title="Editar producto"
+        closable={false}
+        visible={showEditProductModal}
+        footer={null}
+        destroyOnClose
+      >
+        <CreateProduct product={null} setShowModal={setShowEditProductModal} />
+      </Modal>
+    </>
   );
 };
 

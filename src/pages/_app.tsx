@@ -1,5 +1,6 @@
 import "../styles/globals.scss";
 import "antd/dist/antd.css";
+import "react-medium-image-zoom/dist/styles.css";
 import { FC } from "react";
 type AppProps = { Component: FC; pageProps: any };
 import { Provider } from "react-redux";
