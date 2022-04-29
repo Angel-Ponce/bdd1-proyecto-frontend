@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { Product } from "$store/slices/productsSlice";
-import { Button, Input, Typography } from "antd";
+import { Button, Input, Select, Typography } from "antd";
 import { useFormik } from "formik";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ShoppingOutlined } from "@ant-design/icons";
@@ -61,10 +60,21 @@ const CreatePresentation: FC<Props> = ({
       if (!values.color) {
         errors.color = "El campo Color es obligatorio.";
       }
+
+      return errors;
     },
-    onSubmit: async (values) => {},
+    onSubmit: async (values) => {
+      setSavingPresentation(true);
+      console.log(values);
+      setSavingPresentation(false);
+    },
     validateOnChange: true,
   });
+
+  const handleColorChange = (value: string) => {
+    presentationForm.setFieldTouched("color", true);
+    presentationForm.setFieldValue("color", value);
+  };
 
   return (
     <div>
@@ -159,6 +169,38 @@ const CreatePresentation: FC<Props> = ({
           {presentationForm.touched.salePrice &&
           presentationForm.errors.salePrice
             ? presentationForm.errors.salePrice
+            : undefined}
+        </Text>
+      </div>
+
+      <div className="flex flex-col">
+        <Select
+          onChange={handleColorChange}
+          size="large"
+          status={
+            presentationForm.touched.color && presentationForm.errors.color
+              ? "error"
+              : undefined
+          }
+          placeholder="Color de la etiqueta"
+          allowClear
+          options={[
+            { value: "magenta", label: "Magenta" },
+            { value: "red", label: "Rojo" },
+            { value: "volcano", label: "Volcán" },
+            { value: "orange", label: "Naranja" },
+            { value: "gold", label: "Dorado" },
+            { value: "lime", label: "Lima" },
+            { value: "green", label: "Verde" },
+            { value: "cyan", label: "Cian" },
+            { value: "blue", label: "Azul" },
+            { value: "geekblue", label: "Azul geek" },
+            { value: "purple", label: "Morado" },
+          ]}
+        />
+        <Text className="!text-red-600 mt-1 h-[22px]">
+          {presentationForm.touched.color && presentationForm.errors.color
+            ? presentationForm.errors.color
             : undefined}
         </Text>
       </div>
