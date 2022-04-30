@@ -8,23 +8,46 @@ import { Avatar, Breadcrumb, Card, Statistic } from "antd";
 import Link from "next/link";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
-import { ItemsByProvider, setReport } from "$store/slices/reportSlice";
+import {
+  ItemsByProvider,
+  ItemsSelled,
+  SalesByMonth,
+  setReport,
+} from "$store/slices/reportSlice";
 import { useEffect, useState } from "react";
 import to from "await-to-ts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { formatCurrency } from "$helpers/formatCurrency";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
+import { Pie, Bar } from "react-chartjs-2";
 import { dynamicColors } from "$helpers/dynamicRgbColors";
+import { ES_MONTHS } from "$helpers/formatDate";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
 
 const Reports: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
   const [loading, setLoading] = useState<boolean>(false);
   const [chartData1, setChartData1] = useState<ItemsByProvider[]>([]);
+  const [chartData2, setChartData2] = useState<ItemsSelled[]>([]);
+  const [chartData3, setChartData3] = useState<SalesByMonth[]>([]);
 
   const report = useAppSelector((state) => state.report);
   const user = useAppSelector((state) => state.user);
@@ -37,6 +60,28 @@ const Reports: NextPage = () => {
         label: "Productos por proveedor",
         data: chartData1.map((d) => d.items_count),
         backgroundColor: chartData1.map((i) => dynamicColors()),
+      },
+    ],
+  };
+
+  const data2 = {
+    labels: chartData2.map((d) => d.name),
+    datasets: [
+      {
+        label: "Productos por proveedor",
+        data: chartData2.map((d) => d.details_count),
+        backgroundColor: chartData2.map((i) => dynamicColors()),
+      },
+    ],
+  };
+
+  const data3 = {
+    labels: chartData3.map((d) => ES_MONTHS[d.month]),
+    datasets: [
+      {
+        label: "Productos por proveedor",
+        data: chartData3.map((d) => d.total),
+        backgroundColor: chartData3.map((i) => dynamicColors()),
       },
     ],
   };
@@ -60,7 +105,9 @@ const Reports: NextPage = () => {
 
       if (res.data.report) {
         dispatch(setReport(res.data.report));
-        setChartData1(res.data.report.items_by_provider);
+        setChartData1(res.data.report.items_by_provider || []);
+        setChartData2(res.data.report.items_selled || []);
+        setChartData3(res.data.report.sales_by_month || []);
         setLoading(false);
       }
     };
@@ -140,11 +187,18 @@ const Reports: NextPage = () => {
                     />
                   </Card>
                 </div>
-                <div className="mt-10 flex flex-wrap gap-10 items-center justify-between">
-                  <div className="w-[40%]">
+                <div className="mt-10 flex flex-wrap gap-10 items-center justify-center">
+                  <div className="w-full max-w-sm">
                     <Pie data={data1} />;
                   </div>
-                  <div className="w-[60%]"></div>
+                  <div className="flex-1">
+                    <Bar data={data3} />
+                  </div>
+                </div>
+                <div className="flex justify-center w-full mt-8">
+                  <div className="w-full sm:w-[60%]">
+                    <Bar data={data2} />
+                  </div>
                 </div>
               </>
             ) : (
