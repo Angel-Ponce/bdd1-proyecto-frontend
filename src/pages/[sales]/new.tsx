@@ -20,10 +20,13 @@ import {
 } from "@ant-design/icons";
 import { Presentation, Product } from "$store/slices/productsSlice";
 import CartItem from "$molecules/CartItem";
+import { formatCurrency } from "$helpers/formatCurrency";
 
 export interface CartProduct {
   product: Product;
   presentation: Presentation;
+  quantity: number;
+  subtotal: number;
 }
 
 const NewSale: NextPage = () => {
@@ -36,7 +39,15 @@ const NewSale: NextPage = () => {
 
   const addToCart = (product: Product, presentation: Presentation) => {
     setCartProducts((prev) => {
-      return [...prev, { product, presentation }];
+      return [
+        ...prev,
+        {
+          product,
+          presentation,
+          quantity: 1,
+          subtotal: presentation.sale_price,
+        },
+      ];
     });
   };
 
@@ -49,6 +60,8 @@ const NewSale: NextPage = () => {
   };
 
   const [selling, setSelling] = useState<boolean>(false);
+
+  const [total, setTotal] = useState<number>(0);
 
   const { Text, Title } = Typography;
 
@@ -195,7 +208,14 @@ const NewSale: NextPage = () => {
                               </div>
                             </div>
                             <div>
-                              <Title level={4}>Total: Q33.21</Title>
+                              <Title level={4}>
+                                Total:{" "}
+                                {formatCurrency(
+                                  cartProducts.reduce((prev, curr) => {
+                                    return prev + curr.subtotal;
+                                  }, 0)
+                                )}
+                              </Title>
                             </div>
                           </>
                         }
