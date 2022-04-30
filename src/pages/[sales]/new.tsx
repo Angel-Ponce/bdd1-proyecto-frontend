@@ -18,12 +18,20 @@ import {
   UserOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+import { Presentation, Product } from "$store/slices/productsSlice";
+
+export interface CartProduct {
+  product: Product;
+  presentation: Presentation;
+}
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
 
   const loadingProducts = useAppSelector((state) => state.products.loading);
   const products = useAppSelector((state) => state.products.products);
+
+  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
   const [selling, setSelling] = useState<boolean>(false);
 
@@ -89,7 +97,12 @@ const NewSale: NextPage = () => {
                                     <ProductCard
                                       product={product}
                                       addToCart={() => {
-                                        console.log("add to cart");
+                                        setCartProducts((prev) => {
+                                          return [
+                                            ...prev,
+                                            { product, presentation },
+                                          ];
+                                        });
                                       }}
                                       removeFromCart={() => {
                                         console.log("HI");
@@ -109,7 +122,7 @@ const NewSale: NextPage = () => {
                     <div className="flex items-center gap-2">
                       <Title level={2}>Carrito de compras</Title>
 
-                      <Badge count={5}>
+                      <Badge count={cartProducts.length || 0}>
                         <ShoppingCartOutlined className="text-4xl mb-[0.938rem]" />
                       </Badge>
                     </div>
@@ -178,8 +191,11 @@ const NewSale: NextPage = () => {
                           </div>
                         }
                         bordered
-                        dataSource={["asdasd", "asdasd"]}
-                        renderItem={(item) => <List.Item>{item}</List.Item>}
+                        locale={{ emptyText: "No hay productos en el carrito" }}
+                        dataSource={cartProducts || []}
+                        renderItem={(item: CartProduct) => (
+                          <List.Item>{item.presentation.name}</List.Item>
+                        )}
                       />
                     </div>
                   </div>
