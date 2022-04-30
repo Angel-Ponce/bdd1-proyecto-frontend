@@ -90,9 +90,23 @@ const NewSale: NextPage = () => {
       name: "",
       nit: "",
     },
-    validate: (values) => {},
+    validate: (values) => {
+      const errors: any = {};
+
+      if (!values.name) {
+        errors.name = "El campo Nombre es obligatorio";
+      }
+      if (!values.nit) {
+        errors.nit = "El campo NIT es obligatorio";
+      }
+      if (values.nit.toString().length != 9) {
+        errors.nit = "El campo NIT debe tener 9 dígitos";
+      }
+
+      return errors;
+    },
     onSubmit: (values) => {},
-    validateOnMount: true,
+    validateOnChange: true,
   });
 
   return (
@@ -241,7 +255,14 @@ const NewSale: NextPage = () => {
                         }
                         footer={
                           <div className="w-full flex justify-end">
-                            <Button size="large" icon={<CreditCardOutlined />}>
+                            <Button
+                              size="large"
+                              icon={<CreditCardOutlined />}
+                              loading={selling}
+                              onClick={() => {
+                                cartForm.handleSubmit();
+                              }}
+                            >
                               Finalizar compra
                             </Button>
                           </div>
@@ -254,7 +275,6 @@ const NewSale: NextPage = () => {
                             <CartItem
                               item={item}
                               onChange={(e) => {
-                                // console.log(e);
                                 updateCart(item, e.quantity, e.subTotal);
                               }}
                             />
