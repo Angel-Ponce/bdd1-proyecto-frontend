@@ -6,6 +6,7 @@ import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
 import { pageTitle } from "$config/site";
+import SalesTable from "$templates/SalesTable";
 
 const Sales: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
@@ -45,6 +46,9 @@ const Sales: NextPage = () => {
                   >
                     Nueva venta
                   </Button>
+                </div>
+                <div className="mt-5 overflow-x-auto">
+                  <SalesTable />
                 </div>
               </>
             ) : (

@@ -3,6 +3,7 @@ import userReducer from "./slices/userSlice";
 import usersReducer from "./slices/usersSlice";
 import providersReducer from "./slices/providersSlice";
 import productsReducer from "./slices/productsSlice";
+import salesReducer from "./slices/salesSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     users: usersReducer,
     providers: providersReducer,
     products: productsReducer,
+    sales: salesReducer,
   },
 });
 
