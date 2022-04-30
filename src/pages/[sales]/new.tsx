@@ -228,7 +228,7 @@ const NewSale: NextPage = () => {
                           {products.map((product, index) => {
                             return product.presentations.map(
                               (presentation, index2) => {
-                                return (
+                                return presentation.stock ? (
                                   <div key={`${index}-${index2}`}>
                                     <ProductCard
                                       removeFromCartEvent={clearProducts}
@@ -242,7 +242,7 @@ const NewSale: NextPage = () => {
                                       presentation={presentation}
                                     />
                                   </div>
-                                );
+                                ) : null;
                               }
                             );
                           })}
