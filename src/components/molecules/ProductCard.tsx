@@ -2,7 +2,7 @@
 import { formatCurrency } from "$helpers/formatCurrency";
 import { Presentation, Product } from "$store/slices/productsSlice";
 import { Card, Tag, Tooltip, Typography, Button } from "antd";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 
@@ -11,6 +11,7 @@ interface Props {
   presentation: Presentation;
   addToCart: Function;
   removeFromCart: Function;
+  removeFromCartEvent: number;
 }
 
 const { Title, Text } = Typography;
@@ -20,8 +21,13 @@ const ProductCard: FC<Props> = ({
   presentation,
   addToCart,
   removeFromCart,
+  removeFromCartEvent,
 }) => {
   const [addedToCart, setAddedToCart] = useState<boolean>(false);
+
+  useEffect(() => {
+    setAddedToCart(false);
+  }, [removeFromCartEvent]);
 
   return (
     <div className={`select-none`}>

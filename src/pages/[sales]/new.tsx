@@ -7,20 +7,24 @@ import Link from "next/link";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
-import { pageTitle } from "$config/site";
+import { api, pageTitle } from "$config/site";
 import { useAppSelector } from "$hooks/useAppSelector";
 import ProductCard from "$molecules/ProductCard";
 import { useFormik } from "formik";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CreditCardOutlined,
   ShoppingCartOutlined,
   UserOutlined,
   IdcardOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Presentation, Product } from "$store/slices/productsSlice";
 import CartItem from "$molecules/CartItem";
 import { formatCurrency } from "$helpers/formatCurrency";
+import to from "await-to-ts";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export interface CartProduct {
   product: Product;
@@ -31,6 +35,8 @@ export interface CartProduct {
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
+
+  const user = useAppSelector((state) => state.user);
 
   const loadingProducts = useAppSelector((state) => state.products.loading);
   const products = useAppSelector((state) => state.products.products);
@@ -58,6 +64,8 @@ const NewSale: NextPage = () => {
       });
     });
   };
+
+  const [clearProducts, setClearProducts] = useState<number>(1);
 
   const [selling, setSelling] = useState<boolean>(false);
 
@@ -111,12 +119,52 @@ const NewSale: NextPage = () => {
       return errors;
     },
     onSubmit: async (values) => {
-      console.log(values);
+      setSelling(true);
+
+      const [, res] = await to(
+        axios.post(
+          `${api}/sales/sell`,
+          {},
+          {
+            headers: {
+              "X-Token": user.token,
+            },
+          }
+        )
+      );
+
+      if (res) {
+        toast.success("Venta realizada correctamente", {
+          position: "bottom-right",
+        });
+        // dispatch(
+        //   addUser({
+        //     name: values.name,
+        //     email: values.email,
+        //     roles: values.roles,
+        //     image: `https://avatars.dicebear.com/api/initials/${values.name}.svg`,
+        //     id: res.data.id,
+        //   })
+        // );
+        cartForm.resetForm();
+      }
+
+      setSelling(false);
     },
     validateOnChange: true,
   });
 
   const { setFieldValue } = cartForm;
+
+  const handleClearProducts = () => {
+    setClearProducts((prev) => {
+      return prev + 1;
+    });
+
+    setCartProducts([]);
+
+    setFieldValue("cart", []);
+  };
 
   useEffect(() => {
     setFieldValue("cart", cartProducts);
@@ -170,6 +218,7 @@ const NewSale: NextPage = () => {
                                 return (
                                   <div key={`${index}-${index2}`}>
                                     <ProductCard
+                                      removeFromCartEvent={clearProducts}
                                       product={product}
                                       addToCart={() => {
                                         addToCart(product, presentation);
@@ -275,7 +324,18 @@ const NewSale: NextPage = () => {
                                   : undefined}
                               </Text>
                             </div>
-                            <div className="w-full flex justify-end">
+                            <div className="w-full flex justify-end gap-4">
+                              <Button
+                                size="large"
+                                onClick={() => {
+                                  handleClearProducts();
+                                }}
+                                icon={<DeleteOutlined />}
+                                danger
+                                disabled={selling}
+                              >
+                                Limpiar el carrito
+                              </Button>
                               <Button
                                 size="large"
                                 icon={<CreditCardOutlined />}
