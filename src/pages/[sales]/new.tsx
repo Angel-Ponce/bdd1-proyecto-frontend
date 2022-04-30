@@ -1,14 +1,22 @@
+/* eslint-disable @next/next/no-img-element */
 import { NextPage } from "next";
 import Header from "$templates/Header";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Typography } from "antd";
 import Link from "next/link";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
 import Head from "next/head";
 import { pageTitle } from "$config/site";
+import { useAppSelector } from "$hooks/useAppSelector";
+import ProductCard from "$molecules/ProductCard";
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
+
+  const loadingProducts = useAppSelector((state) => state.products.loading);
+  const products = useAppSelector((state) => state.products.products);
+
+  const { Text, Title } = Typography;
 
   return (
     <>
@@ -43,7 +51,38 @@ const NewSale: NextPage = () => {
                     </Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
-                <div>HEladslknadskln</div>
+
+                <div className="flex justify-between mt-5 gap-20 flex-col lg:flex-row">
+                  <div className="w-full md:w-[30rem]">
+                    <Title level={2}>Carrito de compras</Title>
+                    <Text>Busca y agrega productos al carrito de compras.</Text>
+
+                    <div className="flex flex-wrap gap-4 max-h-[600px] overflow-y-auto py-5 px-2 mt-8">
+                      {!loadingProducts && (
+                        <>
+                          {products.map((product, index) => {
+                            return product.presentations.map(
+                              (presentation, index2) => {
+                                return (
+                                  <div key={`${index}-${index2}`}>
+                                    <ProductCard
+                                      product={product}
+                                      addToCart={() => {
+                                        console.log("add to cart");
+                                      }}
+                                      presentation={presentation}
+                                    />
+                                  </div>
+                                );
+                              }
+                            );
+                          })}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12">asdasd</div>
+                </div>
               </>
             ) : (
               <div className="flex justify-center items-center w-full min-h-[calc(100vh-4rem)]">
