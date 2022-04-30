@@ -70,6 +70,9 @@ const NewSale: NextPage = () => {
                                       addToCart={() => {
                                         console.log("add to cart");
                                       }}
+                                      removeFromCart={() => {
+                                        console.log("HI");
+                                      }}
                                       presentation={presentation}
                                     />
                                   </div>
