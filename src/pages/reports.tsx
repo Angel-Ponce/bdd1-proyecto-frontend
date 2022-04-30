@@ -40,7 +40,7 @@ const Reports: NextPage = () => {
       }
 
       if (res.data.report) {
-        dispatch(setReport(res.data));
+        dispatch(setReport(res.data.report));
         setLoading(false);
       }
     };
