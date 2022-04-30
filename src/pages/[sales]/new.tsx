@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { NextPage } from "next";
 import Header from "$templates/Header";
-import { Breadcrumb, Typography } from "antd";
+import { Badge, Breadcrumb, Button, List, Typography } from "antd";
 import Link from "next/link";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
@@ -9,6 +9,7 @@ import Head from "next/head";
 import { pageTitle } from "$config/site";
 import { useAppSelector } from "$hooks/useAppSelector";
 import ProductCard from "$molecules/ProductCard";
+import { CreditCardOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
@@ -52,9 +53,9 @@ const NewSale: NextPage = () => {
                   </Breadcrumb>
                 </div>
 
-                <div className="flex justify-between mt-5 gap-20 flex-col lg:flex-row">
+                <div className="flex justify-between mt-5 gap-20 flex-col-reverse lg:flex-row">
                   <div className="w-full md:w-[30rem]">
-                    <Title level={2}>Carrito de compras</Title>
+                    <Title level={2}>Inventario</Title>
                     <Text>Busca y agrega productos al carrito de compras.</Text>
 
                     <div className="flex flex-wrap gap-4 max-h-[600px] overflow-y-auto py-5 px-2 mt-8">
@@ -84,7 +85,35 @@ const NewSale: NextPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12">asdasd</div>
+                  <div className="w-full lg:w-8/12">
+                    <div className="flex items-center gap-2">
+                      <Title level={2}>Carrito de compras</Title>
+
+                      <Badge count={5}>
+                        <ShoppingCartOutlined className="text-4xl mb-[0.938rem]" />
+                      </Badge>
+                    </div>
+                    <Text>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Proin sed rutrum nisl.{" "}
+                    </Text>
+                    <div className="mt-8">
+                      <List
+                        size="large"
+                        header={<div>Header</div>}
+                        footer={
+                          <div className="w-full flex justify-end">
+                            <Button size="large" icon={<CreditCardOutlined />}>
+                              Finalizar compra
+                            </Button>
+                          </div>
+                        }
+                        bordered
+                        dataSource={["asdasd", "asdasd"]}
+                        renderItem={(item) => <List.Item>{item}</List.Item>}
+                      />
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (
