@@ -7,19 +7,27 @@ import { formatCurrency } from "$helpers/formatCurrency";
 
 const { Title, Text } = Typography;
 
+interface CartItemChangeInterface {
+  item: CartProduct;
+  quantity: number;
+  subTotal: number;
+}
 interface Props {
   item: CartProduct;
+  onChange?: (e: CartItemChangeInterface) => void;
 }
 
-const CartItem: FC<Props> = ({ item }) => {
+const CartItem: FC<Props> = ({ item, onChange }) => {
   const [inputValue, setInputValue] = useState<number>(1);
   const [subTotal, setSubtotal] = useState<number>(
     item.presentation.sale_price
   );
 
-  const onChange = (value: number) => {
+  const onQuantityChange = (value: number) => {
     setInputValue(value);
     setSubtotal(value * item.presentation.sale_price);
+    onChange &&
+      onChange({ item: item, quantity: inputValue, subTotal: subTotal });
   };
 
   const sliderMarks = {
@@ -49,6 +57,11 @@ const CartItem: FC<Props> = ({ item }) => {
             {item.presentation.quantity > 1 ? "unidades" : "unidad"}
           </Tag>
           <div className="mt-2">
+            <Text>
+              Precio unitario: {formatCurrency(item.presentation.sale_price)}
+            </Text>
+          </div>
+          <div className="mt-2">
             <Text>Subtotal: {formatCurrency(subTotal)}</Text>
           </div>
         </div>
@@ -60,7 +73,7 @@ const CartItem: FC<Props> = ({ item }) => {
             marks={sliderMarks}
             min={1}
             max={item.presentation.stock}
-            onChange={onChange}
+            onChange={onQuantityChange}
             value={typeof inputValue === "number" ? inputValue : 0}
           />
         </div>
@@ -71,7 +84,7 @@ const CartItem: FC<Props> = ({ item }) => {
             max={item.presentation.stock}
             style={{ margin: "0 16px" }}
             value={inputValue}
-            onChange={onChange}
+            onChange={onQuantityChange}
           />
         </div>
       </div>

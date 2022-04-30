@@ -211,7 +211,12 @@ const NewSale: NextPage = () => {
                         dataSource={cartProducts || []}
                         renderItem={(item: CartProduct) => (
                           <List.Item>
-                            <CartItem item={item} />
+                            <CartItem
+                              item={item}
+                              onChange={(e) => {
+                                console.log(e);
+                              }}
+                            />
                           </List.Item>
                         )}
                       />
