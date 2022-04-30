@@ -3,7 +3,7 @@ import {
   Product,
   updateProduct,
 } from "$store/slices/productsSlice";
-import { Button, Input, Select, Typography } from "antd";
+import { Button, Input, Popconfirm, Select, Typography } from "antd";
 import { useFormik } from "formik";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { ShoppingOutlined } from "@ant-design/icons";
@@ -172,12 +172,43 @@ const CreatePresentation: FC<Props> = ({
     }
   }, [modalType, setValues, currentPresentation]);
 
+  const handleDelete = async () => {
+    setSavingPresentation(true);
+    if (!currentPresentation) return;
+
+    const [, res] = await to(
+      axios.delete(`${api}/presentations/delete/${currentPresentation?.id}`, {
+        headers: {
+          "X-Token": user.token,
+        },
+      })
+    );
+
+    if (res) {
+      toast.success("Presentación eliminada correctamente", {
+        position: "bottom-right",
+      });
+
+      if (!product) return;
+
+      dispatch(
+        updateProduct({
+          ...product,
+          presentations: [...res.data.presentations],
+        })
+      );
+
+      setShowModal(false);
+    }
+    setSavingPresentation(false);
+  };
+
   return (
     <div>
       <div className="flex flex-col">
         <Input
           size="large"
-          disabled={savingPresentation}
+          disabled={savingPresentation || currentPresentation?.is_unit}
           status={
             presentationForm.touched.name && presentationForm.errors.name
               ? "error"
@@ -222,7 +253,7 @@ const CreatePresentation: FC<Props> = ({
       <div className="flex flex-col">
         <Input
           size="large"
-          disabled={savingPresentation}
+          disabled={savingPresentation || currentPresentation?.is_unit}
           status={
             presentationForm.touched.quantityInPresentation &&
             presentationForm.errors.quantityInPresentation
@@ -283,14 +314,15 @@ const CreatePresentation: FC<Props> = ({
           defaultValue={
             modalType == "edit" ? currentPresentation?.color || "" : undefined
           }
+          disabled={currentPresentation?.is_unit}
           options={[
             { value: "magenta", label: "Magenta" },
             { value: "red", label: "Rojo" },
             { value: "volcano", label: "Volcán" },
             { value: "orange", label: "Naranja" },
             { value: "gold", label: "Dorado" },
-            { value: "lime", label: "Lima" },
             { value: "green", label: "Verde" },
+            { value: "lime", label: "Lima" },
             { value: "cyan", label: "Cian" },
             { value: "blue", label: "Azul" },
             { value: "geekblue", label: "Azul geek" },
@@ -311,6 +343,23 @@ const CreatePresentation: FC<Props> = ({
         >
           Cancelar
         </Button>
+
+        {modalType == "edit" && !currentPresentation?.is_unit ? (
+          <Popconfirm
+            title="¿Estás seguro de borrar esta presentación?"
+            onConfirm={() => {
+              handleDelete();
+            }}
+            onCancel={() => {}}
+            okText="Si"
+            cancelText="No"
+          >
+            <Button danger disabled={savingPresentation}>
+              Borrar
+            </Button>
+          </Popconfirm>
+        ) : null}
+
         <Button
           type="primary"
           loading={savingPresentation}
