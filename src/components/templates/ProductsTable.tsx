@@ -1,12 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Table, Tag, Button, Modal, Popconfirm, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   Presentation,
   Product,
   removeProduct,
-  setProducts,
 } from "$store/slices/productsSlice";
 import { PlusOutlined } from "@ant-design/icons";
 import { formatCurrency } from "$helpers/formatCurrency";
@@ -22,7 +21,8 @@ import CreatePresentation from "$organisms/CreatePresentation";
 
 const ProductsTable: FC = () => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.products);
+  const products = useAppSelector((state) => state.products.products);
+  const loadingProducts = useAppSelector((state) => state.products.loading);
   const user = useAppSelector((state) => state.user);
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,31 +40,6 @@ const ProductsTable: FC = () => {
   const [typeOfPresentationModal, setTypeOfPresentationModal] = useState<
     "create" | "edit"
   >("create");
-
-  useEffect(() => {
-    const getProducts = async () => {
-      setLoading(true);
-      const [err, res] = await to(
-        axios.get(`${api}/items`, {
-          headers: {
-            "X-Token": user.token,
-          },
-        })
-      );
-
-      if (err) {
-        toast.error("Error al obtener los productos", {
-          position: "bottom-right",
-        });
-      }
-      dispatch(setProducts(res.data.items));
-      setLoading(false);
-    };
-
-    if (products?.products?.length == 0) {
-      getProducts();
-    }
-  }, [dispatch, products, user]);
 
   const columns: ColumnsType<Product> = [
     {
@@ -196,9 +171,9 @@ const ProductsTable: FC = () => {
     <>
       <Table
         pagination={{ pageSize: 10 }}
-        loading={loading}
+        loading={loading || loadingProducts}
         columns={columns}
-        dataSource={products.products}
+        dataSource={products}
         bordered
         scroll={{ y: 560 }}
         expandable={{

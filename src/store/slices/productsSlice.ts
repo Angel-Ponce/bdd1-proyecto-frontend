@@ -23,6 +23,7 @@ export interface Product {
 }
 interface ProductsState {
   products: Product[];
+  loading: boolean;
 }
 
 interface SetAction {
@@ -39,8 +40,13 @@ interface RemoveAction {
   };
 }
 
+interface LoadingAction {
+  payload: boolean;
+}
+
 const initialState: ProductsState = {
-  products: <Product[]>[],
+  products: [],
+  loading: false,
 };
 
 export const productsSlice = createSlice({
@@ -48,16 +54,20 @@ export const productsSlice = createSlice({
   initialState,
   reducers: {
     setProducts: (state: ProductsState, action: SetAction) => {
-      return (state = { products: action.payload });
+      return (state = { products: action.payload, loading: state.loading });
     },
     addProduct: (state: ProductsState, action: AddAction) => {
-      return (state = { products: [action.payload, ...state.products] });
+      return (state = {
+        products: [action.payload, ...state.products],
+        loading: state.loading,
+      });
     },
     removeProduct: (state: ProductsState, action: RemoveAction) => {
       return (state = {
         products: state.products.filter(
           (products) => products.id != action.payload.id
         ),
+        loading: state.loading,
       });
     },
     updateProduct: (state: ProductsState, action: AddAction) => {
@@ -68,12 +78,21 @@ export const productsSlice = createSlice({
           }
           return product;
         }),
+        loading: state.loading,
       });
+    },
+    setLoadingProducts: (state: ProductsState, action: LoadingAction) => {
+      return (state = { products: state.products, loading: action.payload });
     },
   },
 });
 
-export const { setProducts, addProduct, removeProduct, updateProduct } =
-  productsSlice.actions;
+export const {
+  setProducts,
+  addProduct,
+  removeProduct,
+  updateProduct,
+  setLoadingProducts,
+} = productsSlice.actions;
 
 export default productsSlice.reducer;
