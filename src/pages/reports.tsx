@@ -28,8 +28,10 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
 } from "chart.js";
-import { Pie, Bar } from "react-chartjs-2";
+import { Pie, Bar, Line } from "react-chartjs-2";
 import { dynamicColors } from "$helpers/dynamicRgbColors";
 import { ES_MONTHS } from "$helpers/formatDate";
 
@@ -39,49 +41,52 @@ ChartJS.register(
   Legend,
   CategoryScale,
   LinearScale,
-  BarElement
+  BarElement,
+  PointElement,
+  LineElement
 );
 
 const Reports: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
   const [loading, setLoading] = useState<boolean>(false);
-  const [chartData1, setChartData1] = useState<ItemsByProvider[]>([]);
-  const [chartData2, setChartData2] = useState<ItemsSelled[]>([]);
-  const [chartData3, setChartData3] = useState<SalesByMonth[]>([]);
+  const [itemsByProvider, setItemsByProvider] = useState<ItemsByProvider[]>([]);
+  const [topItemsSelled, setTopItemsSelled] = useState<ItemsSelled[]>([]);
+  const [salesByMonth, setSalesByMonth] = useState<SalesByMonth[]>([]);
 
   const report = useAppSelector((state) => state.report);
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
-  const data1 = {
-    labels: chartData1.map((d) => d.name),
+  const configChartItemsByProvider = {
+    labels: itemsByProvider.map((d) => d.name),
     datasets: [
       {
         label: "Productos por proveedor",
-        data: chartData1.map((d) => d.items_count),
-        backgroundColor: chartData1.map((i) => dynamicColors()),
+        data: itemsByProvider.map((d) => d.items_count),
+        backgroundColor: itemsByProvider.map((i) => dynamicColors()),
       },
     ],
   };
 
-  const data2 = {
-    labels: chartData2.map((d) => d.name),
+  const configChartTopItemsSelled = {
+    labels: topItemsSelled.map((d) => d.name),
     datasets: [
       {
-        label: "Productos por proveedor",
-        data: chartData2.map((d) => d.details_count),
-        backgroundColor: chartData2.map((i) => dynamicColors()),
+        label: "Top 10 productos más vendidos",
+        data: topItemsSelled.map((d) => d.details_count),
+        backgroundColor: ["#337bb8"],
       },
     ],
   };
 
-  const data3 = {
-    labels: chartData3.map((d) => ES_MONTHS[d.month]),
+  const configChartSalesByMonth = {
+    labels: salesByMonth.map((d) => ES_MONTHS[d.month]),
     datasets: [
       {
-        label: "Productos por proveedor",
-        data: chartData3.map((d) => d.total),
-        backgroundColor: chartData3.map((i) => dynamicColors()),
+        label: "Ventas por mes",
+        data: salesByMonth.map((d) => d.total),
+        backgroundColor: "#3be39e",
+        borderColor: "#3be39e",
       },
     ],
   };
@@ -105,9 +110,9 @@ const Reports: NextPage = () => {
 
       if (res.data.report) {
         dispatch(setReport(res.data.report));
-        setChartData1(res.data.report.items_by_provider || []);
-        setChartData2(res.data.report.items_selled || []);
-        setChartData3(res.data.report.sales_by_month || []);
+        setItemsByProvider(res.data.report.items_by_provider || []);
+        setTopItemsSelled(res.data.report.items_selled || []);
+        setSalesByMonth(res.data.report.sales_by_month || []);
         setLoading(false);
       }
     };
@@ -187,17 +192,17 @@ const Reports: NextPage = () => {
                     />
                   </Card>
                 </div>
-                <div className="mt-10 flex flex-wrap gap-10 items-center justify-center">
+                <div className="mt-10 flex flex-wrap gap-10 items-stretch justify-center">
                   <div className="w-full max-w-sm">
-                    <Pie data={data1} />;
+                    <Pie data={configChartItemsByProvider} />;
                   </div>
-                  <div className="flex-1">
-                    <Bar data={data3} />
+                  <div className="w-full max-w-2xl">
+                    <Line data={configChartSalesByMonth} />
                   </div>
                 </div>
                 <div className="flex justify-center w-full mt-8">
-                  <div className="w-full sm:w-[60%]">
-                    <Bar data={data2} />
+                  <div className="w-full max-w-2xl">
+                    <Bar data={configChartTopItemsSelled} />
                   </div>
                 </div>
               </>
