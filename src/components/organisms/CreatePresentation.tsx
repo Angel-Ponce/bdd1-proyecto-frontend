@@ -1,7 +1,11 @@
-import { Product, updateProduct } from "$store/slices/productsSlice";
+import {
+  Presentation,
+  Product,
+  updateProduct,
+} from "$store/slices/productsSlice";
 import { Button, Input, Select, Typography } from "antd";
 import { useFormik } from "formik";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { ShoppingOutlined } from "@ant-design/icons";
 import to from "await-to-ts";
 import axios from "axios";
@@ -13,6 +17,7 @@ import { useAppDispatch } from "$hooks/useAppDispatch";
 interface Props {
   modalType: "create" | "edit";
   product: Product | null;
+  currentPresentation: Presentation | null;
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -27,6 +32,7 @@ interface PresentationForm {
 const CreatePresentation: FC<Props> = ({
   modalType,
   product,
+  currentPresentation,
   setShowModal,
 }) => {
   const { Text } = Typography;
@@ -72,38 +78,74 @@ const CreatePresentation: FC<Props> = ({
     onSubmit: async (values) => {
       setSavingPresentation(true);
 
-      const [, res] = await to(
-        axios.post(
-          `${api}/presentations/create/${product?.id}`,
-          {
-            name: values.name,
-            stock: values.stock,
-            quantity: values.quantityInPresentation,
-            price: values.salePrice,
-            color: values.color,
-          },
-          {
-            headers: {
-              "X-Token": user.token,
+      if (modalType == "create") {
+        const [, res] = await to(
+          axios.post(
+            `${api}/presentations/create/${product?.id}`,
+            {
+              name: values.name,
+              stock: values.stock,
+              quantity: values.quantityInPresentation,
+              price: values.salePrice,
+              color: values.color,
             },
-          }
-        )
-      );
-      if (res) {
-        toast.success("Presentación guardada correctamente", {
-          position: "bottom-right",
-        });
-
-        if (!product) return;
-
-        dispatch(
-          updateProduct({
-            ...product,
-            presentations: [...res.data.presentations],
-          })
+            {
+              headers: {
+                "X-Token": user.token,
+              },
+            }
+          )
         );
+        if (res) {
+          toast.success("Presentación guardada correctamente", {
+            position: "bottom-right",
+          });
 
-        presentationForm.resetForm();
+          if (!product) return;
+
+          dispatch(
+            updateProduct({
+              ...product,
+              presentations: [...res.data.presentations],
+            })
+          );
+
+          presentationForm.resetForm();
+        }
+      } else {
+        const [, res] = await to(
+          axios.put(
+            `${api}/presentations/edit/${currentPresentation?.id}`,
+            {
+              name: values.name,
+              stock: values.stock,
+              quantity: values.quantityInPresentation,
+              price: values.salePrice,
+              color: values.color,
+            },
+            {
+              headers: {
+                "X-Token": user.token,
+              },
+            }
+          )
+        );
+        if (res) {
+          toast.success("Presentación guardada correctamente", {
+            position: "bottom-right",
+          });
+
+          if (!product) return;
+
+          dispatch(
+            updateProduct({
+              ...product,
+              presentations: [...res.data.presentations],
+            })
+          );
+
+          presentationForm.resetForm();
+        }
       }
 
       setSavingPresentation(false);
@@ -116,6 +158,19 @@ const CreatePresentation: FC<Props> = ({
     presentationForm.setFieldTouched("color", true);
     presentationForm.setFieldValue("color", value);
   };
+
+  const { setValues } = presentationForm;
+  useEffect(() => {
+    if (modalType == "edit") {
+      setValues({
+        name: currentPresentation?.name || "",
+        stock: currentPresentation?.stock,
+        quantityInPresentation: currentPresentation?.quantity,
+        salePrice: currentPresentation?.sale_price,
+        color: currentPresentation?.color || "",
+      });
+    }
+  }, [modalType, setValues, currentPresentation]);
 
   return (
     <div>
@@ -225,6 +280,9 @@ const CreatePresentation: FC<Props> = ({
           }
           placeholder="Color de la etiqueta"
           allowClear
+          defaultValue={
+            modalType == "edit" ? currentPresentation?.color || "" : undefined
+          }
           options={[
             { value: "magenta", label: "Magenta" },
             { value: "red", label: "Rojo" },

@@ -34,6 +34,8 @@ const ProductsTable: FC = () => {
     useState<boolean>(false);
 
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [currentPresentation, setCurrentPresentation] =
+    useState<Presentation | null>(null);
 
   const [typeOfPresentationModal, setTypeOfPresentationModal] = useState<
     "create" | "edit"
@@ -100,11 +102,11 @@ const ProductsTable: FC = () => {
                 <Tooltip
                   key={presentation.id}
                   title="Haz clic para editar esta presentación"
-                  color={"cyan"}
                 >
                   <Tag
                     color={presentation.color}
                     onClick={() => {
+                      setCurrentPresentation(presentation);
                       setTypeOfPresentationModal("edit");
                       setCurrentProduct(value);
                       setShowPresentationModal(true);
@@ -235,9 +237,11 @@ const ProductsTable: FC = () => {
         destroyOnClose
         afterClose={() => {
           setCurrentProduct(null);
+          setCurrentPresentation(null);
         }}
       >
         <CreatePresentation
+          currentPresentation={currentPresentation}
           modalType={typeOfPresentationModal}
           product={currentProduct}
           setShowModal={setShowPresentationModal}
