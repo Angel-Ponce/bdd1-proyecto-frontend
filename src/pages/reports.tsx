@@ -8,21 +8,38 @@ import { Avatar, Breadcrumb, Card, Statistic } from "antd";
 import Link from "next/link";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
-import { setReport } from "$store/slices/reportSlice";
+import { ItemsByProvider, setReport } from "$store/slices/reportSlice";
 import { useEffect, useState } from "react";
 import to from "await-to-ts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { formatCurrency } from "$helpers/formatCurrency";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+import { dynamicColors } from "$helpers/dynamicRgbColors";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Reports: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
   const [loading, setLoading] = useState<boolean>(false);
+  const [chartData1, setChartData1] = useState<ItemsByProvider[]>([]);
 
   const report = useAppSelector((state) => state.report);
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+
+  const data1 = {
+    labels: chartData1.map((d) => d.name),
+    datasets: [
+      {
+        label: "Productos por proveedor",
+        data: chartData1.map((d) => d.items_count),
+        backgroundColor: chartData1.map((i) => dynamicColors()),
+      },
+    ],
+  };
 
   useEffect(() => {
     const getReport = async () => {
@@ -43,6 +60,7 @@ const Reports: NextPage = () => {
 
       if (res.data.report) {
         dispatch(setReport(res.data.report));
+        setChartData1(res.data.report.items_by_provider);
         setLoading(false);
       }
     };
@@ -123,7 +141,9 @@ const Reports: NextPage = () => {
                   </Card>
                 </div>
                 <div className="mt-10 flex flex-wrap gap-10 items-center justify-between">
-                  <div className="w-[40%]"></div>
+                  <div className="w-[40%]">
+                    <Pie data={data1} />;
+                  </div>
                   <div className="w-[60%]"></div>
                 </div>
               </>
