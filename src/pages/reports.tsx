@@ -4,7 +4,7 @@ import Header from "$templates/Header";
 import { api, pageTitle } from "$config/site";
 import AccessDenied from "$templates/AccessDenied";
 import { useLogin } from "$hooks/useLogin";
-import { Breadcrumb } from "antd";
+import { Avatar, Breadcrumb, Card, Statistic } from "antd";
 import Link from "next/link";
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import to from "await-to-ts";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { ArrowUpOutlined } from "@ant-design/icons";
+import { formatCurrency } from "$helpers/formatCurrency";
 
 const Reports: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
@@ -77,7 +79,49 @@ const Reports: NextPage = () => {
                     </Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
-                {loading}
+                <div className="flex justify-around items-center p-5 gap-5 flex-wrap">
+                  <Card>
+                    <Statistic
+                      style={{ width: 250 }}
+                      title="Ventas"
+                      value={report.sales_count || 0}
+                      loading={loading}
+                      precision={0}
+                      valueStyle={{ color: "#3f8600" }}
+                      prefix={<ArrowUpOutlined className="-translate-y-1.5" />}
+                      suffix="Este mes"
+                    />
+                  </Card>
+                  <Card>
+                    <Statistic
+                      style={{ width: 250 }}
+                      title="Ganancias"
+                      value={formatCurrency(report.sales_earnings || 0)}
+                      loading={loading}
+                      precision={2}
+                      valueStyle={{ color: "#3f8600" }}
+                      prefix={<ArrowUpOutlined className="-translate-y-1.5" />}
+                    />
+                  </Card>
+                  <Card>
+                    <Statistic
+                      style={{ width: 250 }}
+                      title="Vendedor del mes"
+                      value={report.best_seller.name || ""}
+                      loading={loading}
+                      valueStyle={{ color: "#3f8600" }}
+                      prefix={
+                        <>
+                          <div className="mr-2">
+                            <Avatar
+                              src={`https://avatars.dicebear.com/api/initials/${report.best_seller.name}.svg`}
+                            />
+                          </div>
+                        </>
+                      }
+                    />
+                  </Card>
+                </div>
               </>
             ) : (
               <div className="flex justify-center items-center w-full min-h-[calc(100vh-4rem)]">
