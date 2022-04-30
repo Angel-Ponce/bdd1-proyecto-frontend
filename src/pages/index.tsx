@@ -12,6 +12,7 @@ import {
   PieChartOutlined,
   TagOutlined,
   FunnelPlotOutlined,
+  ReadOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useAppSelector } from "$hooks/useAppSelector";
@@ -29,9 +30,14 @@ const Home: NextPage = () => {
 
   const pages: Page[] = [
     {
-      name: "Ventas",
-      route: "/sales",
+      name: "Nueva venta",
+      route: "/sales/new",
       icon: <ShoppingCartOutlined />,
+    },
+    {
+      name: "Registro de ventas",
+      route: "/sales",
+      icon: <ReadOutlined />,
     },
     {
       name: "Usuarios",
