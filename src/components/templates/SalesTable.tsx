@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Table } from "antd";
+import { Avatar, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 
 import { useAppSelector } from "$hooks/useAppSelector";
@@ -11,6 +11,10 @@ import to from "await-to-ts";
 import axios from "axios";
 import { api } from "$config/site";
 import toast from "react-hot-toast";
+import { formatDate } from "$helpers/formatDate";
+import { formatCurrency } from "$helpers/formatCurrency";
+import { BarcodeOutlined } from "@ant-design/icons";
+import { insertSymbolAtPosition } from "$helpers/insertCommaAtPosition";
 
 const SalesTable: FC = () => {
   const dispatch = useAppDispatch();
@@ -22,9 +26,66 @@ const SalesTable: FC = () => {
 
   const columns: ColumnsType<Sale> = [
     {
+      title: "Fecha",
+      dataIndex: "sale_date",
+      width: "50px",
+      render: (value: string) => <>{formatDate(value)}</>,
+    },
+    {
       title: "Total",
       dataIndex: "total",
+      width: "50px",
+      render: (value: number) => <>{formatCurrency(value)}</>,
+    },
+    {
+      title: "Factura",
+      dataIndex: "invoice",
       width: "150px",
+      render: (value: string) => (
+        <>
+          <Tag icon={<BarcodeOutlined />} color="default">
+            {value}
+          </Tag>
+        </>
+      ),
+    },
+    {
+      title: "Emitida por",
+      dataIndex: "user",
+      width: "150px",
+      render: (value) => (
+        <>
+          <div className="flex items-center gap-3">
+            <Avatar
+              src={`https://avatars.dicebear.com/api/initials/${value.name}.svg`}
+            />
+            <div className="flex flex-col">
+              <p className="!m-0 !mb-1">{value.name}</p>
+              <p className="!m-0">{value?.email || ""}</p>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "Cliente",
+      dataIndex: "customer",
+      width: "150px",
+      render: (value) => (
+        <>
+          <div className="flex items-center gap-3">
+            <Avatar
+              src={`https://avatars.dicebear.com/api/initials/${value.name}.svg`}
+            />
+            <div className="flex flex-col">
+              <p className="!m-0 !mb-1">{value.name}</p>
+              <p className="!m-0">
+                {value.nit ? insertSymbolAtPosition(value.nit, 6, "-") : "-"}
+              </p>
+            </div>
+          </div>
+        </>
+      ),
     },
   ];
 
