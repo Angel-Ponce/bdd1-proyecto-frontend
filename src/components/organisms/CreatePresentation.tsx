@@ -1,8 +1,14 @@
-import { Product } from "$store/slices/productsSlice";
+import { Product, updateProduct } from "$store/slices/productsSlice";
 import { Button, Input, Select, Typography } from "antd";
 import { useFormik } from "formik";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ShoppingOutlined } from "@ant-design/icons";
+import to from "await-to-ts";
+import axios from "axios";
+import { api } from "$config/site";
+import { useAppSelector } from "$hooks/useAppSelector";
+import toast from "react-hot-toast";
+import { useAppDispatch } from "$hooks/useAppDispatch";
 
 interface Props {
   modalType: "create" | "edit";
@@ -15,7 +21,6 @@ interface PresentationForm {
   stock: number | undefined;
   quantityInPresentation: number | undefined;
   salePrice: number | undefined;
-  itemId: string;
   color: string;
 }
 
@@ -26,6 +31,8 @@ const CreatePresentation: FC<Props> = ({
 }) => {
   const { Text } = Typography;
 
+  const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const [savingPresentation, setSavingPresentation] = useState<boolean>(false);
 
   const presentationForm = useFormik<PresentationForm>({
@@ -34,7 +41,6 @@ const CreatePresentation: FC<Props> = ({
       stock: undefined,
       quantityInPresentation: undefined,
       salePrice: undefined,
-      itemId: "",
       color: "",
     },
     validate: (values) => {
@@ -65,8 +71,43 @@ const CreatePresentation: FC<Props> = ({
     },
     onSubmit: async (values) => {
       setSavingPresentation(true);
-      console.log(values);
+
+      const [, res] = await to(
+        axios.post(
+          `${api}/presentations/create/${product?.id}`,
+          {
+            name: values.name,
+            stock: values.stock,
+            quantity: values.quantityInPresentation,
+            price: values.salePrice,
+            color: values.color,
+          },
+          {
+            headers: {
+              "X-Token": user.token,
+            },
+          }
+        )
+      );
+      if (res) {
+        toast.success("Presentación guardada correctamente", {
+          position: "bottom-right",
+        });
+
+        if (!product) return;
+
+        dispatch(
+          updateProduct({
+            ...product,
+            presentations: [...res.data.presentations],
+          })
+        );
+
+        presentationForm.resetForm();
+      }
+
       setSavingPresentation(false);
+      setShowModal(false);
     },
     validateOnChange: true,
   });
