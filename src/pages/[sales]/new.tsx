@@ -39,6 +39,14 @@ const NewSale: NextPage = () => {
     });
   };
 
+  const removeFromCart = (product: Product, presentation: Presentation) => {
+    setCartProducts((prev) => {
+      return prev.filter((item) => {
+        return !(item.product == product && item.presentation == presentation);
+      });
+    });
+  };
+
   const [selling, setSelling] = useState<boolean>(false);
 
   const { Text, Title } = Typography;
@@ -106,7 +114,7 @@ const NewSale: NextPage = () => {
                                         addToCart(product, presentation);
                                       }}
                                       removeFromCart={() => {
-                                        console.log("HI");
+                                        removeFromCart(product, presentation);
                                       }}
                                       presentation={presentation}
                                     />
