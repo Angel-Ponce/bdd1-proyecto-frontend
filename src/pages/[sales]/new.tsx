@@ -143,54 +143,60 @@ const NewSale: NextPage = () => {
                       <List
                         size="large"
                         header={
-                          <div className="flex gap-2 w-full">
-                            <div className="flex flex-col w-[60%]">
-                              <Input
-                                disabled={selling}
-                                status={
-                                  cartForm.touched.name && cartForm.errors.name
-                                    ? "error"
-                                    : undefined
-                                }
-                                type={"text"}
-                                name="name"
-                                size="large"
-                                placeholder="Nombre"
-                                prefix={<UserOutlined />}
-                                onChange={cartForm.handleChange}
-                                value={cartForm.values.name}
-                              />
-                              <Text className="!text-red-600 mt-1 h-[22px]">
-                                {cartForm.touched.name && cartForm.errors.name
-                                  ? cartForm.errors.name
-                                  : undefined}
-                              </Text>
+                          <>
+                            <div className="flex gap-2 w-full">
+                              <div className="flex flex-col w-[60%]">
+                                <Input
+                                  disabled={selling}
+                                  status={
+                                    cartForm.touched.name &&
+                                    cartForm.errors.name
+                                      ? "error"
+                                      : undefined
+                                  }
+                                  type={"text"}
+                                  name="name"
+                                  size="large"
+                                  placeholder="Nombre"
+                                  prefix={<UserOutlined />}
+                                  onChange={cartForm.handleChange}
+                                  value={cartForm.values.name}
+                                />
+                                <Text className="!text-red-600 mt-1 h-[22px]">
+                                  {cartForm.touched.name && cartForm.errors.name
+                                    ? cartForm.errors.name
+                                    : undefined}
+                                </Text>
+                              </div>
+                              <div className="flex flex-col w-[40%]">
+                                <Input
+                                  disabled={selling}
+                                  status={
+                                    cartForm.touched.nit && cartForm.errors.nit
+                                      ? "error"
+                                      : undefined
+                                  }
+                                  type={"number"}
+                                  name="nit"
+                                  size="large"
+                                  placeholder="NIT"
+                                  prefix={<IdcardOutlined />}
+                                  showCount
+                                  maxLength={9}
+                                  onChange={cartForm.handleChange}
+                                  value={cartForm.values.nit}
+                                />
+                                <Text className="!text-red-600 mt-1 h-[22px]">
+                                  {cartForm.touched.nit && cartForm.errors.nit
+                                    ? cartForm.errors.nit
+                                    : undefined}
+                                </Text>
+                              </div>
                             </div>
-                            <div className="flex flex-col w-[40%]">
-                              <Input
-                                disabled={selling}
-                                status={
-                                  cartForm.touched.nit && cartForm.errors.nit
-                                    ? "error"
-                                    : undefined
-                                }
-                                type={"number"}
-                                name="nit"
-                                size="large"
-                                placeholder="NIT"
-                                prefix={<IdcardOutlined />}
-                                showCount
-                                maxLength={9}
-                                onChange={cartForm.handleChange}
-                                value={cartForm.values.nit}
-                              />
-                              <Text className="!text-red-600 mt-1 h-[22px]">
-                                {cartForm.touched.nit && cartForm.errors.nit
-                                  ? cartForm.errors.nit
-                                  : undefined}
-                              </Text>
+                            <div>
+                              <Title level={4}>Total: Q33.21</Title>
                             </div>
-                          </div>
+                          </>
                         }
                         footer={
                           <div className="w-full flex justify-end">
