@@ -1,11 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, useEffect, useState } from "react";
-import { Avatar, Table, Tag } from "antd";
+import { Avatar, Card, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
-
 import { useAppSelector } from "$hooks/useAppSelector";
 import { useAppDispatch } from "$hooks/useAppDispatch";
-
 import { Sale, setSales } from "$store/slices/salesSlice";
 import to from "await-to-ts";
 import axios from "axios";
@@ -15,8 +13,11 @@ import { formatDate } from "$helpers/formatDate";
 import { formatCurrency } from "$helpers/formatCurrency";
 import { BarcodeOutlined } from "@ant-design/icons";
 import { insertSymbolAtPosition } from "$helpers/insertCommaAtPosition";
+import Zoom from "react-medium-image-zoom";
 
 const SalesTable: FC = () => {
+  const { Title, Text } = Typography;
+
   const dispatch = useAppDispatch();
   const sales = useAppSelector((state) => state.sales.sales);
 
@@ -127,8 +128,50 @@ const SalesTable: FC = () => {
         bordered
         scroll={{ y: 560 }}
         expandable={{
-          expandedRowRender: (sale) => (
-            <p style={{ margin: 0 }}>{JSON.stringify(sale.items_bought)}</p>
+          expandedRowRender: (sale: Sale) => (
+            <div className="flex gap-6 p-2">
+              {sale.items_bought.map((soldProduct, index) => {
+                return (
+                  <div key={index}>
+                    <Card
+                      style={{ width: 240 }}
+                      cover={
+                        <Zoom zoomMargin={20}>
+                          <img
+                            alt={soldProduct.item.name}
+                            src={soldProduct.item.image_link}
+                          />
+                        </Zoom>
+                      }
+                    >
+                      <Card.Meta
+                        title={soldProduct.item.name}
+                        description={
+                          <div className="flex flex-col">
+                            <Title level={3}>
+                              Subtotal: {formatCurrency(soldProduct.subtotal)}
+                            </Title>
+                            <div className="flex flex-wrap gap-2 mb-1">
+                              <Text>Presentación:</Text>
+                              <Tag color={soldProduct.presentation.color}>
+                                {soldProduct.presentation.name}
+                              </Tag>
+                            </div>
+                            <Text>
+                              Cantidad comprada: {soldProduct.quantity}
+                            </Text>
+                            <Text>
+                              Precio unitario:{" "}
+                              {formatCurrency(soldProduct.sale_price)}
+                            </Text>
+                          </div>
+                        }
+                      />
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
           ),
           rowExpandable: (sale) => sale.items_bought.length > 0,
         }}

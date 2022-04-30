@@ -18,12 +18,13 @@ export interface SoldProductDetail {
     color: string;
     quantity: number;
   };
+  subtotal: number;
 }
 
 export interface Sale {
   key: string;
   id: string;
-  sale_date: Date;
+  sale_date: string;
   /**
    * total sale price
    */
