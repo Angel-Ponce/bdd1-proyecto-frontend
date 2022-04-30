@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Role } from "./userSlice";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   image: string;

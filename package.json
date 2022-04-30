@@ -15,6 +15,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@ant-design/charts": "^1.3.6",
     "@reduxjs/toolkit": "^1.8.1",
     "@types/axios": "^0.14.0",
     "@types/date-fns": "^2.6.0",
@@ -22,11 +23,13 @@
     "autoprefixer": "^10.4.2",
     "await-to-ts": "^1.0.6",
     "axios": "^0.26.1",
+    "chart.js": "^3.7.1",
     "date-fns": "^2.28.0",
     "formik": "^2.2.9",
     "next": "12.1.0",
     "postcss": "^8.4.6",
     "react": "17.0.2",
+    "react-chartjs-2": "^4.1.0",
     "react-dom": "17.0.2",
     "react-hot-toast": "^2.2.0",
     "react-medium-image-zoom": "^4.3.7",
