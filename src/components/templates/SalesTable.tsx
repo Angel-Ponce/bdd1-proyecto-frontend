@@ -28,19 +28,19 @@ const SalesTable: FC = () => {
     {
       title: "Fecha",
       dataIndex: "sale_date",
-      width: "50px",
+      width: "200px",
       render: (value: string) => <>{formatDate(value)}</>,
     },
     {
       title: "Total",
       dataIndex: "total",
-      width: "50px",
+      width: "200px",
       render: (value: number) => <>{formatCurrency(value)}</>,
     },
     {
       title: "Factura",
       dataIndex: "invoice",
-      width: "150px",
+      width: "320px",
       render: (value: string) => (
         <>
           <Tag icon={<BarcodeOutlined />} color="default">
@@ -52,7 +52,7 @@ const SalesTable: FC = () => {
     {
       title: "Emitida por",
       dataIndex: "user",
-      width: "150px",
+      width: "360px",
       render: (value) => (
         <>
           <div className="flex items-center gap-3">
@@ -70,7 +70,7 @@ const SalesTable: FC = () => {
     {
       title: "Cliente",
       dataIndex: "customer",
-      width: "150px",
+      width: "360px",
       render: (value) => (
         <>
           <div className="flex items-center gap-3">
@@ -128,9 +128,9 @@ const SalesTable: FC = () => {
         scroll={{ y: 560 }}
         expandable={{
           expandedRowRender: (sale) => (
-            <p style={{ margin: 0 }}>{sale.total}</p>
+            <p style={{ margin: 0 }}>{JSON.stringify(sale.items_bought)}</p>
           ),
-          rowExpandable: (sale) => sale.total > 0,
+          rowExpandable: (sale) => sale.items_bought.length > 0,
         }}
       />
     </>
