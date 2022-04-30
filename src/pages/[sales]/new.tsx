@@ -61,7 +61,27 @@ const NewSale: NextPage = () => {
 
   const [selling, setSelling] = useState<boolean>(false);
 
-  const [total, setTotal] = useState<number>(0);
+  const updateCart = (
+    item: CartProduct,
+    quantity: number,
+    subTotal: number
+  ) => {
+    setCartProducts((prev) => {
+      return prev.map((prevItem) => {
+        if (
+          prevItem.product == item.product &&
+          prevItem.presentation == item.presentation
+        ) {
+          return {
+            ...prevItem,
+            quantity,
+            subtotal: subTotal,
+          };
+        }
+        return prevItem;
+      });
+    });
+  };
 
   const { Text, Title } = Typography;
 
@@ -234,7 +254,8 @@ const NewSale: NextPage = () => {
                             <CartItem
                               item={item}
                               onChange={(e) => {
-                                console.log(e);
+                                // console.log(e);
+                                updateCart(item, e.quantity, e.subTotal);
                               }}
                             />
                           </List.Item>

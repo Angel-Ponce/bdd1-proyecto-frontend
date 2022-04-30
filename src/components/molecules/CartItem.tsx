@@ -8,7 +8,6 @@ import { formatCurrency } from "$helpers/formatCurrency";
 const { Title, Text } = Typography;
 
 interface CartItemChangeInterface {
-  item: CartProduct;
   quantity: number;
   subTotal: number;
 }
@@ -23,11 +22,17 @@ const CartItem: FC<Props> = ({ item, onChange }) => {
     item.presentation.sale_price
   );
 
-  const onQuantityChange = (value: number) => {
-    setInputValue(value);
-    setSubtotal(value * item.presentation.sale_price);
-    onChange &&
-      onChange({ item: item, quantity: inputValue, subTotal: subTotal });
+  const onQuantityChange = (quantity: number) => {
+    setInputValue(quantity);
+
+    setSubtotal(quantity * item.presentation.sale_price);
+
+    if (onChange) {
+      onChange({
+        quantity,
+        subTotal: quantity * item.presentation.sale_price,
+      });
+    }
   };
 
   const sliderMarks = {
