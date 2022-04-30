@@ -110,9 +110,7 @@ const Reports: NextPage = () => {
 
       if (res.data.report) {
         dispatch(setReport(res.data.report));
-        setItemsByProvider(res.data.report.items_by_provider || []);
-        setTopItemsSelled(res.data.report.items_selled || []);
-        setSalesByMonth(res.data.report.sales_by_month || []);
+
         setLoading(false);
       }
     };
@@ -120,6 +118,12 @@ const Reports: NextPage = () => {
       getReport();
     }
   }, [dispatch, report.best_seller.id, user.token]);
+
+  useEffect(() => {
+    setItemsByProvider(report.items_by_provider || []);
+    setTopItemsSelled(report.items_selled || []);
+    setSalesByMonth(report.sales_by_month || []);
+  }, [report.items_by_provider, report.items_selled, report.sales_by_month]);
 
   return (
     <div className="flex flex-col min-h-screen">
