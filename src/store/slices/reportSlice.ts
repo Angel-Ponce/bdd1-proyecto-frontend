@@ -49,7 +49,7 @@ export const reportSlice = createSlice({
   initialState,
   reducers: {
     setReport: (state: Report, action: SetAction) => {
-      return action.payload;
+      return (state = { ...action.payload });
     },
   },
 });
