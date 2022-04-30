@@ -19,6 +19,7 @@ import {
   IdcardOutlined,
 } from "@ant-design/icons";
 import { Presentation, Product } from "$store/slices/productsSlice";
+import CartItem from "$molecules/CartItem";
 
 export interface CartProduct {
   product: Product;
@@ -139,7 +140,7 @@ const NewSale: NextPage = () => {
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Proin sed rutrum nisl.{" "}
                     </Text>
-                    <div className="mt-8">
+                    <div className="mt-8 max-h-[600px] min-h-[400px]  overflow-auto">
                       <List
                         size="large"
                         header={
@@ -209,7 +210,9 @@ const NewSale: NextPage = () => {
                         locale={{ emptyText: "No hay productos en el carrito" }}
                         dataSource={cartProducts || []}
                         renderItem={(item: CartProduct) => (
-                          <List.Item>{item.presentation.name}</List.Item>
+                          <List.Item>
+                            <CartItem item={item} />
+                          </List.Item>
                         )}
                       />
                     </div>
