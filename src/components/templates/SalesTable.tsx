@@ -81,6 +81,7 @@ const SalesTable: FC = () => {
             <div className="flex flex-col">
               <p className="!m-0 !mb-1">{value.name}</p>
               <p className="!m-0">
+                NIT:{" "}
                 {value.nit ? insertSymbolAtPosition(value.nit, 6, "-") : "-"}
               </p>
             </div>

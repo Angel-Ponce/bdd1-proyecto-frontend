@@ -40,12 +40,11 @@ const Sales: NextPage = () => {
                   </Breadcrumb>
                 </div>
                 <div className="flex mt-5 justify-end">
-                  <Button
-                    type="primary"
-                    onClick={() => console.log("Crear venta")}
-                  >
-                    Nueva venta
-                  </Button>
+                  <Link href="/sales/new" passHref>
+                    <a>
+                      <Button type="primary">Nueva venta</Button>
+                    </a>
+                  </Link>
                 </div>
                 <div className="mt-5 overflow-x-auto">
                   <SalesTable />
