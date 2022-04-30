@@ -25,6 +25,8 @@ import { formatCurrency } from "$helpers/formatCurrency";
 import to from "await-to-ts";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useAppDispatch } from "$hooks/useAppDispatch";
+import { addSales } from "$store/slices/salesSlice";
 
 export interface CartProduct {
   product: Product;
@@ -35,6 +37,8 @@ export interface CartProduct {
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
+
+  const dispatch = useAppDispatch();
 
   const user = useAppSelector((state) => state.user);
 
@@ -124,7 +128,22 @@ const NewSale: NextPage = () => {
       const [, res] = await to(
         axios.post(
           `${api}/sales/sell`,
-          {},
+          {
+            customer: values.name,
+            nit: values.nit.toString(),
+            total: cartProducts.reduce((prev, curr) => {
+              return prev + curr.subtotal;
+            }, 0),
+            itemsBought: cartProducts.map((cartProduct: CartProduct) => {
+              return {
+                item: cartProduct.product.id,
+                quantity: cartProduct.quantity,
+                subtotal: cartProduct.subtotal,
+                presentation: cartProduct.presentation.id,
+                price: cartProduct.presentation.sale_price,
+              };
+            }),
+          },
           {
             headers: {
               "X-Token": user.token,
@@ -137,15 +156,9 @@ const NewSale: NextPage = () => {
         toast.success("Venta realizada correctamente", {
           position: "bottom-right",
         });
-        // dispatch(
-        //   addUser({
-        //     name: values.name,
-        //     email: values.email,
-        //     roles: values.roles,
-        //     image: `https://avatars.dicebear.com/api/initials/${values.name}.svg`,
-        //     id: res.data.id,
-        //   })
-        // );
+
+        dispatch(addSales(res.data));
+        handleClearProducts();
         cartForm.resetForm();
       }
 
