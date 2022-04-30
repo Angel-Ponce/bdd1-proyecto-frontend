@@ -33,6 +33,12 @@ const NewSale: NextPage = () => {
 
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
+  const addToCart = (product: Product, presentation: Presentation) => {
+    setCartProducts((prev) => {
+      return [...prev, { product, presentation }];
+    });
+  };
+
   const [selling, setSelling] = useState<boolean>(false);
 
   const { Text, Title } = Typography;
@@ -97,12 +103,7 @@ const NewSale: NextPage = () => {
                                     <ProductCard
                                       product={product}
                                       addToCart={() => {
-                                        setCartProducts((prev) => {
-                                          return [
-                                            ...prev,
-                                            { product, presentation },
-                                          ];
-                                        });
+                                        addToCart(product, presentation);
                                       }}
                                       removeFromCart={() => {
                                         console.log("HI");
