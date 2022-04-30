@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 import { NextPage } from "next";
 import Header from "$templates/Header";
-import { Badge, Breadcrumb, Button, List, Typography } from "antd";
+import { Badge, Breadcrumb, Button, Input, List, Typography } from "antd";
 import Link from "next/link";
 import { useLogin } from "$hooks/useLogin";
 import AccessDenied from "$templates/AccessDenied";
@@ -9,7 +10,14 @@ import Head from "next/head";
 import { pageTitle } from "$config/site";
 import { useAppSelector } from "$hooks/useAppSelector";
 import ProductCard from "$molecules/ProductCard";
-import { CreditCardOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { useFormik } from "formik";
+import { useState } from "react";
+import {
+  CreditCardOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+  IdcardOutlined,
+} from "@ant-design/icons";
 
 const NewSale: NextPage = () => {
   const [isLoggedIn, mounted] = useLogin();
@@ -17,7 +25,19 @@ const NewSale: NextPage = () => {
   const loadingProducts = useAppSelector((state) => state.products.loading);
   const products = useAppSelector((state) => state.products.products);
 
+  const [selling, setSelling] = useState<boolean>(false);
+
   const { Text, Title } = Typography;
+
+  const cartForm = useFormik({
+    initialValues: {
+      name: "",
+      nit: "",
+    },
+    validate: (values) => {},
+    onSubmit: (values) => {},
+    validateOnMount: true,
+  });
 
   return (
     <>
@@ -100,7 +120,56 @@ const NewSale: NextPage = () => {
                     <div className="mt-8">
                       <List
                         size="large"
-                        header={<div>Header</div>}
+                        header={
+                          <div className="flex gap-2 w-full">
+                            <div className="flex flex-col w-[60%]">
+                              <Input
+                                disabled={selling}
+                                status={
+                                  cartForm.touched.name && cartForm.errors.name
+                                    ? "error"
+                                    : undefined
+                                }
+                                type={"text"}
+                                name="name"
+                                size="large"
+                                placeholder="Nombre"
+                                prefix={<UserOutlined />}
+                                onChange={cartForm.handleChange}
+                                value={cartForm.values.name}
+                              />
+                              <Text className="!text-red-600 mt-1 h-[22px]">
+                                {cartForm.touched.name && cartForm.errors.name
+                                  ? cartForm.errors.name
+                                  : undefined}
+                              </Text>
+                            </div>
+                            <div className="flex flex-col w-[40%]">
+                              <Input
+                                disabled={selling}
+                                status={
+                                  cartForm.touched.nit && cartForm.errors.nit
+                                    ? "error"
+                                    : undefined
+                                }
+                                type={"number"}
+                                name="nit"
+                                size="large"
+                                placeholder="NIT"
+                                prefix={<IdcardOutlined />}
+                                showCount
+                                maxLength={9}
+                                onChange={cartForm.handleChange}
+                                value={cartForm.values.nit}
+                              />
+                              <Text className="!text-red-600 mt-1 h-[22px]">
+                                {cartForm.touched.nit && cartForm.errors.nit
+                                  ? cartForm.errors.nit
+                                  : undefined}
+                              </Text>
+                            </div>
+                          </div>
+                        }
                         footer={
                           <div className="w-full flex justify-end">
                             <Button size="large" icon={<CreditCardOutlined />}>
