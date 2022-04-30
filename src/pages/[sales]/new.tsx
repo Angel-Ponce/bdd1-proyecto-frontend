@@ -11,7 +11,7 @@ import { pageTitle } from "$config/site";
 import { useAppSelector } from "$hooks/useAppSelector";
 import ProductCard from "$molecules/ProductCard";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   CreditCardOutlined,
   ShoppingCartOutlined,
@@ -89,6 +89,7 @@ const NewSale: NextPage = () => {
     initialValues: {
       name: "",
       nit: "",
+      cart: [],
     },
     validate: (values) => {
       const errors: any = {};
@@ -103,11 +104,23 @@ const NewSale: NextPage = () => {
         errors.nit = "El campo NIT debe tener 9 dígitos";
       }
 
+      if (cartProducts.length == 0) {
+        errors.cart = "El carrito está vacío";
+      }
+
       return errors;
     },
-    onSubmit: (values) => {},
+    onSubmit: async (values) => {
+      console.log(values);
+    },
     validateOnChange: true,
   });
+
+  const { setFieldValue } = cartForm;
+
+  useEffect(() => {
+    setFieldValue("cart", cartProducts);
+  }, [cartProducts, setFieldValue]);
 
   return (
     <>
@@ -254,17 +267,26 @@ const NewSale: NextPage = () => {
                           </>
                         }
                         footer={
-                          <div className="w-full flex justify-end">
-                            <Button
-                              size="large"
-                              icon={<CreditCardOutlined />}
-                              loading={selling}
-                              onClick={() => {
-                                cartForm.handleSubmit();
-                              }}
-                            >
-                              Finalizar compra
-                            </Button>
+                          <div className="w-full flex flex-col">
+                            <div>
+                              <Text className="!text-red-600 mt-1 h-[22px]">
+                                {cartForm.touched && cartForm.errors.cart
+                                  ? cartForm.errors.cart
+                                  : undefined}
+                              </Text>
+                            </div>
+                            <div className="w-full flex justify-end">
+                              <Button
+                                size="large"
+                                icon={<CreditCardOutlined />}
+                                loading={selling}
+                                onClick={() => {
+                                  cartForm.handleSubmit();
+                                }}
+                              >
+                                Finalizar compra
+                              </Button>
+                            </div>
                           </div>
                         }
                         bordered
