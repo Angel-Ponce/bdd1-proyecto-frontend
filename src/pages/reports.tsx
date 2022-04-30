@@ -122,6 +122,10 @@ const Reports: NextPage = () => {
                     />
                   </Card>
                 </div>
+                <div className="mt-10 flex flex-wrap gap-10 items-center justify-between">
+                  <div className="w-[40%]"></div>
+                  <div className="w-[60%]"></div>
+                </div>
               </>
             ) : (
               <div className="flex justify-center items-center w-full min-h-[calc(100vh-4rem)]">
