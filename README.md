@@ -2,9 +2,7 @@
 
 ## Integrantes
 
-- Carlos Dubón
-- Melysa Granados
-- Ivan Rodriguez
-- Angel Ponce
+- [Carlos Dubón](https://github.com/carlos-dubon)
+- [Angel Ponce](https://github.com/Angel-Ponce)
 
 ## `yarn dev` 🚀
